@@ -3,7 +3,7 @@ import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogT
 import CloseIcon from '@mui/icons-material/Close';
 import moment from 'moment/moment';
 import {reset} from '../../../features/folder/folderSlice';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import {toast} from 'react-toastify';
 import {getFolderInfo$} from '../../../features/folder/folderThunk';
 
@@ -11,6 +11,8 @@ import {getFolderInfo$} from '../../../features/folder/folderThunk';
 function FolderInfo({open, onClose, folder}) {
     const dispatch = useDispatch();
     const [folderObj, setFolderObj] = useState(null);
+    const {user} = useSelector(state => state.auth);
+    const superUser = process.env.REACT_APP_SUPER_USER;
 
     useEffect(() => {
         // Make api hit here just to fetch root
@@ -29,13 +31,12 @@ function FolderInfo({open, onClose, folder}) {
         // eslint-disable-next-line
       }, []);
 
-
     return (
         <Dialog
             open={open} onClose={() => onClose('info')} fullWidth maxWidth='md'
         >
             <DialogTitle>
-                {folderObj && folderObj.name} - Properties
+                {folderObj && folderObj.name} - Properties {user?.role === superUser ? `(Resource Id: ${folderObj && folderObj.deid})` : ''}
             </DialogTitle>
             <DialogContent>
                 {folderObj ? (
