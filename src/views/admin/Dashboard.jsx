@@ -36,6 +36,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import {toast} from 'react-toastify';
 import {useAuthStatus} from '../../hooks/useAuthStatus';
 import Spinner from '../../components/shared/Spinner';
+import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
 
 const drawerWidth = 250;
 
@@ -201,10 +202,16 @@ export default function Dashboard(props) {
       setPermissionToCheck('customer_whatsapp_view');
       setShouldCheckPermission(true);
     }
-
+  
     if(location.pathname === '/admin/folder') {
       setSelectedIndex(8);
       setPermissionToCheck('folder_view');
+      setShouldCheckPermission(true);
+    }
+    
+    if(location.pathname === '/admin/amc-due') {
+      setSelectedIndex(9);
+      setPermissionToCheck('customer_amcdue_view');
       setShouldCheckPermission(true);
     }
 
@@ -294,6 +301,7 @@ export default function Dashboard(props) {
           new SidenavListItem(7, 'Whatsapp Access', '/admin/customer/whatsapp-access', <WhatsAppIcon/>, []),
         ]),
         new SidenavListItem(8, 'Folder', '/admin/folder', <FolderIcon/>, []),
+        new SidenavListItem(9, 'Amc Due', '/admin/amc-due', <CurrencyRupeeIcon/>, []),
       ]
     } else {
       if(user.permissions) {
@@ -328,9 +336,13 @@ export default function Dashboard(props) {
           hasOneCustomerPermission = true;
           menuOptions[1].children.push(new SidenavListItem(7, 'Whatsapp Access', '/admin/customer/whatsapp-access', <WhatsAppIcon/>, []));
         }
-    
+     
         if(user.permissions.includes('folder_view')) {
           menuOptions.push(new SidenavListItem(8, 'Folder', '/admin/folder', <FolderIcon/>, []));
+        }
+
+        if(user.permissions.includes('customer_amcdue_view')) {
+          menuOptions.push(new SidenavListItem(9, 'Amc Due', '/admin/amc-due', <CurrencyRupeeIcon/>, []));
         }
       }
     

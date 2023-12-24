@@ -40,7 +40,7 @@ const CustomToolbar = ({justifyContent, page, pageSize, pageCount, updateGrid, r
           }
 
           <Box>
-            <Typography noWrap component="span" sx={{display: 'inline-block', pt: '.8rem'}}>
+            <Typography noWrap component="span" sx={{ml: {xs: '2rem'}, display: 'inline-block', pt: '.8rem'}}>
               Rows Per Page:
             </Typography> 
             <FormControl variant="standard" sx={{m: '.5rem', minWidth: 50 }}>

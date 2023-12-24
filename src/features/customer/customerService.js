@@ -8,6 +8,7 @@ const getCustomers$ = async (data) => {
         page: data.page,
         pageSize: data.pageSize,
         quickFilter: data.quickFilter,
+        dateFilter: data.dateFilter,
         sortOrder: data.sortOrder,
     }});
     return response.data;
