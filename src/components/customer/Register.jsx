@@ -2,8 +2,7 @@ import React, {Fragment, useEffect, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import {reset} from '../../features/customer/customerSlice';
 import {bulkDeleteCustomerRegisters, customerAction$, getCustomerBackupParentFolder, getCustomerEinvoices$, getCustomerRegisters$, getCustomers$} from '../../features/customer/customerThunk';
-import { DataGrid} 
-from '@mui/x-data-grid';
+import { DataGrid} from '@mui/x-data-grid';
 import { Tooltip, IconButton, Card, CardHeader, CardContent, CardActions, Button } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
 import ExplicitIcon from '@mui/icons-material/Explicit';
