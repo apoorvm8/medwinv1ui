@@ -1,24 +1,15 @@
 import React, {Fragment, useEffect, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import {reset} from '../../features/customer/customerSlice';
-import {customerAction$, getCustomerBackupParentFolder, getCustomerEinvoices$, getCustomers$} from '../../features/customer/customerThunk';
+import {customerAction$, getCustomerEinvoices$} from '../../features/customer/customerThunk';
 import { DataGrid} 
 from '@mui/x-data-grid';
 import { Tooltip, IconButton, CardHeader, Card, CardContent } from '@mui/material';
-import LockIcon from '@mui/icons-material/Lock';
 import ExplicitIcon from '@mui/icons-material/Explicit';
-import KeyIcon from '@mui/icons-material/Key';
-import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import BackupIcon from '@mui/icons-material/Backup';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
 import {toast} from 'react-toastify';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import CheckIcon from '@mui/icons-material/Check';
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import AddIcon from '@mui/icons-material/Add';
-import AddFolder from '../folder/folderactions/AddFolder';
 import {styles, CustomToolbar} from './../shared/CustomToolbar';
-import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon  from '@mui/icons-material/Delete';
 
 const Einvoice = () => {
@@ -36,9 +27,6 @@ const Einvoice = () => {
     const [confirmDialog, setConfirmDialog] = useState(false);
     const [confirmData, setConfirmData] = useState(null);
     const [confirmMsg, setConfirmMsg] = useState("");
-    const [createFolderOpen, setCreateFolderOpen] = useState(false);
-    const [createFolder, setCreateFolder] = useState(null);
-    const [fromSource, setFromSource] = useState(null);
     const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
 
     const statuses = [
@@ -89,7 +77,6 @@ const Einvoice = () => {
     const customerAction = async (actionType, row) => {
       setConfirmMsg("");
       setConfirmData(null);
-      setFromSource(null);  
       if(actionType === "einvoice") {
         setConfirmMsg(`${row.active ? 'Disable' : 'Enable'} E-invoice for account ${row.acctno} ?`);
         setConfirmDialog(true);

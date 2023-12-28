@@ -27,7 +27,6 @@ const Customers = () => {
   const [pageCount, setPageCount] = useState(0);
   const [page, setPage] = useState(0);
   const [quickFilter, setQuickFilter] = useState('');
-  const [totalRecords, setTotalRecords] = useState(0);
   const [triggerEffect, setTriggerEffect] = useState(0);
   const [confirmDialog, setConfirmDialog] = useState(false);
   const [confirmData, setConfirmData] = useState(null);
@@ -38,6 +37,12 @@ const Customers = () => {
   const [tableInfoObj, setTableInfoObj] = useState({per_page: 0, total: 0, to:0, from:0});
   const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
   const superUser = process.env.REACT_APP_SUPER_USER;
+  const [status, setStatus] = useState({value: '-1', text: 'All'});
+  const statuses = [
+    {value: '-1', text: "All"},
+    {value: 'Y', text: "Unlocked"},
+    {value: 'N', text: "Locked"},
+  ]
 
   useEffect(() => {
     // Make api hit here just to fetch root
@@ -46,6 +51,7 @@ const Customers = () => {
           page: page+1,
           pageSize: pageSize,
           quickFilter: quickFilter,
+          status: JSON.stringify(status),
           sortOrder: JSON.stringify(sortOrder)
         })).unwrap();
         
@@ -55,7 +61,6 @@ const Customers = () => {
             ? response.data.customers.last_page
             : prevRowCountState,
         );
-        setTotalRecords(response.data.customers.total);
         setTableInfoObj({
           per_page: response.data.customers.per_page,
           total: response.data.customers.total,
@@ -67,7 +72,7 @@ const Customers = () => {
 
     getCustomers();
     // eslint-disable-next-line
-  }, [page, pageSize, quickFilter, triggerEffect, sortOrder]);
+  }, [page, pageSize, quickFilter, triggerEffect, sortOrder, status]);
 
   const updateGrid = (data) => {
     if(data.type === 'page') {
@@ -191,6 +196,13 @@ const Customers = () => {
 
   const handleCreateRes = (res) => {
     refreshGrid();
+  }
+
+  const onStatusChange = (newStatus) => {
+    setStatus({
+      ...status,
+      ...newStatus
+    })
   }
 
   const columns = [
@@ -412,8 +424,8 @@ const Customers = () => {
             }}
             componentsProps={{ 
               // header: { justifyContent: 'flex-end', page, pageSize, pageCount, updateGrid: updateGrid},
-              footer: { justifyContent: 'space-between', page, pageSize, pageCount, quickFilter, updateGrid, refreshGrid, tableInfoObj},
-              toolbar: { justifyContent: 'space-between', page, pageSize, pageCount, quickFilter, updateGrid, refreshGrid, tableInfoObj},
+              footer: { justifyContent: 'space-between', page, pageSize, pageCount, quickFilter, updateGrid, refreshGrid, status, statuses, onStatusChange, tableInfoObj},
+              toolbar: { justifyContent: 'space-between', page, pageSize, pageCount, quickFilter, updateGrid, refreshGrid, status, statuses, onStatusChange, tableInfoObj},
             }}
             />
           </CardContent>

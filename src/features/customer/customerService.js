@@ -9,6 +9,7 @@ const getCustomers$ = async (data) => {
         pageSize: data.pageSize,
         quickFilter: data.quickFilter,
         dateFilter: data.dateFilter,
+        status: data.status,
         sortOrder: data.sortOrder,
     }});
     return response.data;
@@ -47,7 +48,8 @@ const getCustomerStockAccess$ = async (data) => {
         page: data.page,
         pageSize: data.pageSize,
         quickFilter: data.quickFilter,
-        status: data.status
+        status: data.status,
+        sortOrder: data.sortOrder,
     }});
     return response.data;
 }
@@ -57,7 +59,8 @@ const getCustomerBackupAccess$ = async (data) => {
         page: data.page,
         pageSize: data.pageSize,
         quickFilter: data.quickFilter,
-        status: data.status
+        status: data.status,
+        sortOrder: data.sortOrder,
     }});
     return response.data;
 }
@@ -67,7 +70,8 @@ const getCustomerRegisters$ = async (data) => {
         page: data.page,
         pageSize: data.pageSize,
         quickFilter: data.quickFilter,
-        status: data.status
+        status: data.status,
+        sortOrder: data.sortOrder,
     }});
     return response.data;
 }
@@ -87,7 +91,8 @@ const getCustomerWhatsapps$ = async (data) => {
         page: data.page,
         pageSize: data.pageSize,
         quickFilter: data.quickFilter,
-        status: data.status
+        status: data.status,
+        sortOrder: data.sortOrder
     }});
     return response.data;
 }
