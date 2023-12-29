@@ -22,7 +22,7 @@ import {Link} from 'react-router-dom';
 import  ListItemButton  from '@mui/material/ListItemButton';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import { Collapse, useMediaQuery, useTheme } from '@mui/material';
+import { Button, Collapse, useMediaQuery, useTheme } from '@mui/material';
 import SidenavListItem from './../../models/SidenavListItem';
 import styled from '@emotion/styled';
 import ContactsIcon from '@mui/icons-material/Contacts';
@@ -287,7 +287,7 @@ export default function Dashboard(props) {
     new SidenavListItem(0, 'Home', '/admin', <HomeIcon/>, [])
   ];
   let hasOneCustomerPermission = false;
-
+  
   if(user) {
     if(user.role === 'superuser') {
       menuOptions  = [
@@ -344,10 +344,9 @@ export default function Dashboard(props) {
         if(user.permissions.includes('customer_amcdue_view')) {
           menuOptions.push(new SidenavListItem(9, 'Amc Due', '/admin/amc-due', <CurrencyRupeeIcon/>, []));
         }
-      }
-    
+      }    
       if(!hasOneCustomerPermission) {
-        menuOptions = menuOptions.splice(0, 1);
+        menuOptions.splice(1, 1);
       }
     }
   }
@@ -429,7 +428,7 @@ if(checkingStatus) {
       return (
         <Box sx={{ display: 'flex' }}>
           <CssBaseline />
-          <AppBar position="fixed" open={matches ? open : false}>
+          <AppBar color='primary' position="fixed" open={matches ? open : false}>
             <Toolbar>
               <IconButton
                 color="inherit"
@@ -440,9 +439,12 @@ if(checkingStatus) {
               >
                 <MenuIcon />
               </IconButton>
-              <Typography variant="h6" noWrap component="div">
-                Admin Dashboard
+              <Typography variant="h6" noWrap component="div" sx={{flexGrow: 1}}>
+                Dashboard
               </Typography>
+              <Button sx={{fontWeight: 'bold'}} startIcon={<ExitToAppIcon/>} color='inherit' onClick={logoutFn}>
+                  EXIT/LOGOUT
+              </Button>
             </Toolbar>
           </AppBar>
           <Box
@@ -498,9 +500,9 @@ if(checkingStatus) {
   } 
   
   return loggedIn ? (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: 'flex'}}>
       <CssBaseline />
-      <AppBar position="fixed" open={matches ? open : false}>
+      <AppBar color='primary' position="fixed" open={matches ? open : false}>
         <Toolbar>
           <IconButton
             color="inherit"
@@ -511,9 +513,12 @@ if(checkingStatus) {
           >
             <MenuIcon />
           </IconButton>
-          <Typography variant="h6" noWrap component="div">
-            Admin Dashboard
+          <Typography variant="h6" noWrap component="div" sx={{flexGrow: 1}}>
+            Dashboard
           </Typography>
+          <Button sx={{fontWeight: 'bold'}} startIcon={<ExitToAppIcon/>} color='inherit' onClick={logoutFn}>
+              EXIT/LOGOUT
+          </Button>
         </Toolbar>
       </AppBar>
       <Box

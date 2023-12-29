@@ -1,24 +1,13 @@
 import React, {Fragment, useEffect, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import {reset} from '../../features/customer/customerSlice';
-import {bulkDeleteCustomerRegisters, customerAction$, getCustomerBackupParentFolder, getCustomerEinvoices$, getCustomerRegisters$, getCustomers$} from '../../features/customer/customerThunk';
+import {bulkDeleteCustomerRegisters, getCustomerRegisters$} from '../../features/customer/customerThunk';
 import { DataGrid} from '@mui/x-data-grid';
-import { Tooltip, IconButton, Card, CardHeader, CardContent, CardActions, Button } from '@mui/material';
-import LockIcon from '@mui/icons-material/Lock';
-import ExplicitIcon from '@mui/icons-material/Explicit';
-import KeyIcon from '@mui/icons-material/Key';
-import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import BackupIcon from '@mui/icons-material/Backup';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
+import {Card, CardHeader, CardContent, CardActions, Button } from '@mui/material';
 import {toast} from 'react-toastify';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import CheckIcon from '@mui/icons-material/Check';
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import AddIcon from '@mui/icons-material/Add';
-import AddFolder from '../folder/folderactions/AddFolder';
 import {styles, CustomToolbar} from './../shared/CustomToolbar';
-import CloseIcon from '@mui/icons-material/Close';
-import DeleteIcon  from '@mui/icons-material/Delete';
 import InfoDialog from '../shared/InfoDialog';
 
 const Register = () => {
@@ -29,26 +18,20 @@ const Register = () => {
     const [pageSize, setPageSize] = useState(10);
     const [pageCount, setPageCount] = useState(0);
     const [page, setPage] = useState(0);
-    const [status, setStatus] = useState({value: -1, text: 'All'});
     const [quickFilter, setQuickFilter] = useState('');
     const [totalRecords, setTotalRecords] = useState(0);
     const [triggerEffect, setTriggerEffect] = useState(0);
     const [confirmDialog, setConfirmDialog] = useState(false);
     const [confirmData, setConfirmData] = useState(null);
     const [confirmMsg, setConfirmMsg] = useState("");
-    const [createFolderOpen, setCreateFolderOpen] = useState(false);
-    const [createFolder, setCreateFolder] = useState(null);
-    const [fromSource, setFromSource] = useState(null);
     const [tableInfoObj, setTableInfoObj] = useState({per_page: 0, total: 0, to:0, from:0});
     const [selectedRows, setSelectedRows] = useState([]);
     const [infoDialog, setInfoDialog] = useState(false);
     const [infoMsg, setInfoMsg] = useState('');
+    const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
+
     const superUser = process.env.REACT_APP_SUPER_USER;
-    const statuses = [
-      {value: -1, text: "All"},
-      {value: 1, text: "Active"},
-      {value: 0, text: "Inactive"},
-    ]
+    
 
     useEffect(() => {
       // Make api hit here just to fetch root
@@ -57,7 +40,7 @@ const Register = () => {
             page: page + 1,
             pageSize: pageSize,
             quickFilter: quickFilter,
-            status: JSON.stringify(status)
+            sortOrder: JSON.stringify(sortOrder),
           })).unwrap();
           
           setStateRows(response.data.customerregisters.data);
@@ -78,7 +61,7 @@ const Register = () => {
   
       getCustomerRegisters();
       // eslint-disable-next-line
-    }, [page, pageSize, quickFilter, triggerEffect, status]);
+    }, [page, pageSize, quickFilter, triggerEffect, sortOrder]);
 
     const updateGrid = (data) => {
       if(data.type === 'page') {
@@ -91,6 +74,11 @@ const Register = () => {
         setPageSize(data.value);
         setPage(newPage - 1);
       }
+    }
+
+    const onSortChange = (e) => {
+      setSortOrder(e[0]);
+      setPage(0);
     }
 
     const handleCloseConfirmDialog = async (confirmData) => {
@@ -160,25 +148,33 @@ const Register = () => {
       sortable: false,
       renderCell: (index) => (pageSize * page) + index.api.getRowIndex(index.row.id) + 1,
       width: 55,
+      headerName: 'S.No',
       renderHeader: () => <strong>S.No</strong>
     },
     {
       field: 'acctno',
       width: 80,
+      sortingOrder: ['asc', 'desc'],
+      headerName: 'C_ID',
       renderHeader: () => <strong>C_ID</strong>
     },
     { 
       field: 'subdesc', headerName: 'Name', width: 250,
       cellClassName: 'wrap-text cell-font-size',
+      sortingOrder: ['desc', 'asc'],
       renderHeader: () => <strong>Name</strong>
     },
     { 
       field: 'datetimereg', width: 180,
       cellClassName: 'cell-bold',
+      sortingOrder: ['desc', 'asc'],
+      headerName: 'Date/Time',
       renderHeader: () => <strong>Date/Time</strong>
     },
     { 
       field: 'remarks', width: 500,
+      sortable: false,
+      headerName: 'Remarks',
       renderHeader: () => <strong>Remarks</strong>
     },
   ];
@@ -219,6 +215,7 @@ const Register = () => {
             showCellRightBorder={true}
             onFilterModelChange={onFilterChange}
             onSelectionModelChange={onSelectionModelChange}
+            onSortModelChange={onSortChange}
             selectionModel={selectedRows}
 
             components={{

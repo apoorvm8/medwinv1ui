@@ -186,21 +186,6 @@ export const folderSlice = createSlice({
         .addCase(updateProgressBar.rejected, (state) => {
             state.fileUploadProgress = 0;
         })
-        .addCase(downloadResource.pending, (state) => {
-            state.isLoading = true;
-            state.loadingMsg = "Downloading Contents... Please wait.";
-        })
-        .addCase(downloadResource.fulfilled, (state) => {
-            state.isLoading = false;
-            state.isSuccess = true;
-            state.loadingMsg = "";
-        })
-        .addCase(downloadResource.rejected, (state, action) => {
-            state.isLoading = false;
-            state.isError = true;
-            state.message = action.payload;
-            state.loadingMsg = "";
-        })
         .addCase(getFolderInfo$.pending, (state) => {
             state.isLoading = true;
         })

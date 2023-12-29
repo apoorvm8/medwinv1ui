@@ -22,6 +22,7 @@ import {downloadResource} from '../../features/folder/folderThunk';
 import {reset} from '../../features/folder/folderSlice';
 import FolderInfo from './folderactions/FolderInfo';
 import FolderPermission from './folderactions/FolderPermission';
+import {authInstance} from '../../interceptor/auth-interceptor';
 
 function FolderMenu({folder}) {
     const styles = {
@@ -66,10 +67,10 @@ function FolderMenu({folder}) {
         if(confirm) {
             try {
                 toast.success(`Starting download of ${folder.name}`);
-                let res = await dispatch(downloadResource({id: folder.id})).unwrap();
+                let response = await authInstance.get(`/folders/download-file/${folder.id}`, {responseType: 'blob'});
+                let res = response.data;
                 const url = (window.URL && window.URL.createObjectURL) ? window.URL.createObjectURL(new Blob([res])) : window.webkitURL.createObjectURL(new Blob([res]));
-                const link = document.createElement('a');
-                
+                const link = document.createElement('a');                
                 link.href = url;
                 link.setAttribute('download', folder.resource_type  === "folder" ? folder.name + ".zip" : folder.name); //or any other extension
                 document.body.appendChild(link);
@@ -81,7 +82,7 @@ function FolderMenu({folder}) {
                 toast.success("Download started successfully.");
             } catch(error) {
                 toast.dismiss();
-                toast.error(error);
+                toast.error('Error in downloading file');
             }
             dispatch(reset());
         }

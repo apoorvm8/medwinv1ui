@@ -1,24 +1,15 @@
 import React, {Fragment, useEffect, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import {reset} from '../../features/customer/customerSlice';
-import {customerAction$, getCustomerBackupParentFolder, getCustomerEinvoices$, getCustomerStockAccess$, getCustomers$} from '../../features/customer/customerThunk';
+import {customerAction$, getCustomerStockAccess$} from '../../features/customer/customerThunk';
 import { DataGrid} 
 from '@mui/x-data-grid';
 import { Tooltip, IconButton, CardHeader, CardContent, Card } from '@mui/material';
-import LockIcon from '@mui/icons-material/Lock';
-import ExplicitIcon from '@mui/icons-material/Explicit';
-import KeyIcon from '@mui/icons-material/Key';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
-import BackupIcon from '@mui/icons-material/Backup';
-import LockOpenIcon from '@mui/icons-material/LockOpen';
 import {toast} from 'react-toastify';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import CheckIcon from '@mui/icons-material/Check';
-import AddToDriveIcon from '@mui/icons-material/AddToDrive';
-import AddIcon from '@mui/icons-material/Add';
-import AddFolder from '../folder/folderactions/AddFolder';
 import {styles, CustomToolbar} from './../shared/CustomToolbar';
-import CloseIcon from '@mui/icons-material/Close';
 import DeleteIcon  from '@mui/icons-material/Delete';
 
 const StockAccess = () => {
@@ -37,9 +28,8 @@ const StockAccess = () => {
     const [confirmDialog, setConfirmDialog] = useState(false);
     const [confirmData, setConfirmData] = useState(null);
     const [confirmMsg, setConfirmMsg] = useState("");
-    const [createFolderOpen, setCreateFolderOpen] = useState(false);
-    const [createFolder, setCreateFolder] = useState(null);
-    const [fromSource, setFromSource] = useState(null);
+    const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
+
     const statuses = [
       {value: -1, text: "All"},
       {value: 1, text: "Active"},
@@ -54,7 +44,8 @@ const StockAccess = () => {
             page:  page+1,
             pageSize: pageSize,
             quickFilter: quickFilter,
-            status: JSON.stringify(status)
+            status: JSON.stringify(status),
+            sortOrder: JSON.stringify(sortOrder),
           })).unwrap();
           
           setStateRows(response.data.stockaccess.data);
@@ -69,7 +60,7 @@ const StockAccess = () => {
   
       getCustomerStockAccess();
       // eslint-disable-next-line
-    }, [page, pageSize, quickFilter, triggerEffect, status]);
+    }, [page, pageSize, quickFilter, triggerEffect, status, sortOrder]);
 
     const updateGrid = (data) => {
       if(data.type === 'page') {
@@ -87,7 +78,6 @@ const StockAccess = () => {
     const customerAction = async (actionType, row) => {
       setConfirmMsg("");
       setConfirmData(null);
-      setFromSource(null);
   
       if(actionType === "stockaccess") {
         setConfirmMsg(`Are you sure want to ${row.active ? 'disable' : 'enable'} stock access for account ${row.acctno} ?`);
@@ -134,6 +124,11 @@ const StockAccess = () => {
 
     const refreshGrid = () => {
       setTriggerEffect(Math.random().toString(36)); // We want to run useeffect to reload the datatable
+    }
+
+    const onSortChange = (e) => {
+      setSortOrder(e[0]);
+      setPage(0);
     }
 
     const onStatusChange = (newStatus) => {
@@ -188,30 +183,36 @@ const StockAccess = () => {
       field: 'acctno',
       width: 80,
       headerName: 'C_ID',
+      sortingOrder: ['asc', 'desc'],
       renderHeader: () => <strong>C_ID</strong>
     },
     { 
       field: 'subdesc', headerName: 'Name', width: 250,
       cellClassName: 'wrap-text cell-font-size',
+      sortingOrder: ['desc', 'asc'],
       renderHeader: () => <strong>Name</strong>
-    },
-    { 
-      field: 'gstno', headerName: 'GST', width: 200,
-      cellClassName: 'wrap-text cell-font-size',
-      renderHeader: () => <strong>GST</strong>
     },
     { 
       field: 'install_date', width: 120, headerName: "Install Dt",
       cellClassName: 'cell-bold',
+      sortingOrder: ['desc', 'asc'],
       renderHeader: () => <strong>Install DT</strong>
     },
     { 
       field: 'next_amc_date', width: 120, headerName: 'AMC DT',
       cellClassName: 'cell-bold',
+      sortingOrder: ['desc', 'asc'],
       renderHeader: () => <strong>AMC DT</strong>
     },
     { 
+      field: 'remarks', width: 250, headerName: 'Remarks',
+      cellClassName: 'cell-bold',
+      sortable: false,
+      renderHeader: () => <strong>Remarks</strong>
+    },
+    { 
       field: 'created_at', width: 200, cellClassName: 'cell-bold', headerName: 'Created On',
+      sortingOrder: ['desc', 'asc'],
       renderHeader: () => <strong>Created On</strong>
     },
   ];
@@ -263,6 +264,7 @@ const StockAccess = () => {
           showColumnRightBorder={true}
           showCellRightBorder={true}
           onFilterModelChange={onFilterChange}
+          onSortModelChange={onSortChange}
           components={{
             Footer: CustomToolbar,
             // Header: CustomPagination,

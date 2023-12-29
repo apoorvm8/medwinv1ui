@@ -26,8 +26,13 @@ const AmcDue = () => {
     const [endDate, setEndDate] = useState(dayjs().endOf("month"));
     const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
     const [dateFilter, setDateFilter] = useState({});
-    const superUser = process.env.REACT_APP_SUPER_USER;
-
+    const [status, setStatus] = useState({value: '-1', text: 'All'});
+    const statuses = [
+      {value: '-1', text: "All"},
+      {value: 'Y', text: "Unlocked"},
+      {value: 'N', text: "Locked"},
+    ]
+  
     useEffect(() => {
       // Make api hit here just to fetch root
       const getCustomers =  async () => {
@@ -36,7 +41,8 @@ const AmcDue = () => {
             pageSize: pageSize,
             quickFilter: quickFilter,
             dateFilter: JSON.stringify({date1: startDate.format('YYYY-MM-DD'), date2: endDate.format('YYYY-MM-DD'), col: 'nextamcdate'}),
-            sortOrder: JSON.stringify(sortOrder)
+            sortOrder: JSON.stringify(sortOrder),
+            status: JSON.stringify(status)
           })).unwrap();
           
           setStateRows(response.data.customers.data);
@@ -57,7 +63,7 @@ const AmcDue = () => {
   
       getCustomers();
       // eslint-disable-next-line
-    }, [page, pageSize, quickFilter, triggerEffect, sortOrder, dateFilter]);
+    }, [page, pageSize, quickFilter, triggerEffect, sortOrder, dateFilter, status]);
   
     const updateGrid = (data) => {
       if(data.type === 'page') {
@@ -95,6 +101,13 @@ const AmcDue = () => {
       setQuickFilter(e.quickFilterValues.join(' '));
       setPage(0);
     }  
+
+    const onStatusChange = (newStatus) => {
+      setStatus({
+        ...status,
+        ...newStatus
+      })
+    }
 
     const columns = [
       {
@@ -228,8 +241,8 @@ const AmcDue = () => {
             }}
             componentsProps={{ 
               // header: { justifyContent: 'flex-end', page, pageSize, pageCount, updateGrid: updateGrid},
-              footer: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, tableInfoObj},
-              toolbar: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, tableInfoObj}
+              footer: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, status, statuses, onStatusChange, tableInfoObj},
+              toolbar: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, status, statuses, onStatusChange, tableInfoObj}
             }}
             />
           </CardContent>
