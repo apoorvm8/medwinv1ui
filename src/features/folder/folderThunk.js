@@ -93,20 +93,6 @@ export const updateProgressBar = createAsyncThunk('folder/updateProgressBar', as
     }
 })
 
-/**
- * @desc Following function handle downloading of resource
- * @param {} data
- */
-export const downloadResource = createAsyncThunk('folder/downloadResource', async (data, thunkAPI) => {
-    try {
-        return await folderService.downloadResource(data);
-    } catch (error) {
-        let responseObj = await error.response.data.text();
-        const message = JSON.parse(responseObj).message;
-        // const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-        return thunkAPI.rejectWithValue(message);
-    }
-})
 
 /**
  * @desc Following function handle downloading of resource

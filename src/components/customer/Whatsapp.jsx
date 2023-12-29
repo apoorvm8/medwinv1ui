@@ -197,12 +197,6 @@ const Whatsapp = () => {
       renderHeader: () => <strong>Name</strong>
     },
     { 
-      field: 'gstno', headerName: 'GST', width: 200,
-      cellClassName: 'wrap-text cell-font-size',
-      sortable: false,
-      renderHeader: () => <strong>GST</strong>
-    },
-    { 
       headerName: 'Install DT',
       field: 'install_date', width: 120,
       cellClassName: 'cell-bold',
@@ -215,6 +209,13 @@ const Whatsapp = () => {
       cellClassName: 'cell-bold',
       sortingOrder: ['desc', 'asc'],
       renderHeader: () => <strong>AMC DT</strong>
+    },
+    { 
+      headerName: 'Remarks',
+      field: 'remarks', width: 250,
+      cellClassName: 'cell-bold',
+      sortable: false,
+      renderHeader: () => <strong>Remarks</strong>
     },
     { 
       headerName: 'Created On',

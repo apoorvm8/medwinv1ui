@@ -146,6 +146,7 @@ const Einvoice = () => {
       field: 'sno' , 
       filterable: false,
       sortable: false,
+      headerName: 'S.NO',
       renderCell: (index) => (pageSize * page) + index.api.getRowIndex(index.row.id) + 1,
       width: 55,
       renderHeader: () => <strong>S.No</strong>
@@ -157,6 +158,7 @@ const Einvoice = () => {
       headerAlign: 'left',
       sortable: false,
       cellClassName: 'wrap-text',
+      headerName: 'Action',
       renderHeader: () => <strong>Actions</strong>,
       renderCell: (params) => {
         let eInvoiceStatus = params.row.active;
@@ -180,6 +182,7 @@ const Einvoice = () => {
       field: 'acctno',
       width: 80,
       sortOrder: ['asc', 'desc'],
+      headerName: 'C_ID',
       renderHeader: () => <strong>C_ID</strong>
     },
     { 
@@ -189,25 +192,35 @@ const Einvoice = () => {
       renderHeader: () => <strong>Name</strong>
     },
     { 
-      field: 'gstno', headerName: 'GST', width: 200,
-      cellClassName: 'wrap-text cell-font-size',
-      renderHeader: () => <strong>GST</strong>
-    },
-    { 
       field: 'install_date', width: 120,
       cellClassName: 'cell-bold',
       sortOrder: ['desc', 'asc'],
+      headerName: 'Install Dt',
       renderHeader: () => <strong>Install DT</strong>
     },
     { 
       field: 'next_amc_date', width: 120,
       cellClassName: 'cell-bold',
       sortOrder: ['desc', 'asc'],
+      headerName: 'AMC DT',
       renderHeader: () => <strong>AMC DT</strong>
+    },
+    { 
+      field: 'remarks', width: 250,
+      cellClassName: 'cell-bold',
+      sortable:false,
+      headerName: 'Remarks',
+      renderHeader: () => <strong>Remarks</strong>
+    },
+    { 
+      field: 'gstno', headerName: 'GST', width: 120,
+      cellClassName: 'wrap-text cell-font-size',
+      renderHeader: () => <strong>GST</strong>
     },
     { 
       field: 'created_at', width: 200, cellClassName: 'cell-bold',
       sortOrder: ['desc', 'asc'],
+      headerName: 'Created On',
       renderHeader: () => <strong>Created On</strong>
     },
   ];
@@ -220,6 +233,7 @@ const Einvoice = () => {
       headerAlign: 'left',
       sortable: false,
       cellClassName: 'wrap-text',
+      headerName: 'Admin Action',
       renderHeader: () => <strong>Admin</strong>,
       renderCell: (params) => {
         return (

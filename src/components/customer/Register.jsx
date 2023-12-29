@@ -148,12 +148,14 @@ const Register = () => {
       sortable: false,
       renderCell: (index) => (pageSize * page) + index.api.getRowIndex(index.row.id) + 1,
       width: 55,
+      headerName: 'S.No',
       renderHeader: () => <strong>S.No</strong>
     },
     {
       field: 'acctno',
       width: 80,
       sortingOrder: ['asc', 'desc'],
+      headerName: 'C_ID',
       renderHeader: () => <strong>C_ID</strong>
     },
     { 
@@ -166,11 +168,13 @@ const Register = () => {
       field: 'datetimereg', width: 180,
       cellClassName: 'cell-bold',
       sortingOrder: ['desc', 'asc'],
+      headerName: 'Date/Time',
       renderHeader: () => <strong>Date/Time</strong>
     },
     { 
       field: 'remarks', width: 500,
       sortable: false,
+      headerName: 'Remarks',
       renderHeader: () => <strong>Remarks</strong>
     },
   ];

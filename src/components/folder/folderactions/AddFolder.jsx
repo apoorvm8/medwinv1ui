@@ -16,7 +16,8 @@ import Draggable from 'react-draggable';
 const validationSchema = yup.object({
   name: yup
     .string()
-    .required('Folder name is required.'),
+    .required('Folder name is required.')
+    .matches(/^[a-zA-Z][a-zA-Z0-9_ ]*$/, 'Folder can only be alphanumeric with underscore'),
   resource_module: yup
     .string()
     .required('Folder module is required.'),
@@ -40,7 +41,7 @@ function AddFolder({open, onClose, folder, fromSource = null, emitCreateRes = nu
   const {isLoading} = useSelector(state => state.folder);
   let [permissionRows, setPermissionRows] = useState(null);
   const [readOnly, setReadOnly] = useState(false);
-  
+
   const formik = useFormik({
     initialValues: {
       name: '',
@@ -177,7 +178,7 @@ function AddFolder({open, onClose, folder, fromSource = null, emitCreateRes = nu
       </Dialog>
       {
         permissionOpen && <FolderPermission emitPermissionsToParent={handleIncomingPermissions} folder={folder} open={permissionOpen} onClose={handleDialogClose} fromParent={true}
-        permissionRows={permissionRows} fromAdd={true}/>
+        permissionRows={permissionRows} fromAdd={true} folderToCreateName={formik.values.name}/>
       }
     </React.Fragment>
 

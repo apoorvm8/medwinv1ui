@@ -49,12 +49,6 @@ const uploadFiles$ = async(data, thunkAPI) => {
     return response.data;
 }
 
-// Delete folder
-const downloadResource = async(data) => {
-    let response = await authInstance.get(`/folders/download-file/${data.id}`, {responseType: 'blob'});
-    return response.data;
-}
-
 const getFolderInfo$ = async(data) => {
     let response = await authInstance.get(`/folders/folder-info/${data.id}`);
     return response.data;
@@ -79,7 +73,6 @@ const folderService = {
     editFolder,
     deleteFolder,
     uploadFiles$,
-    downloadResource,
     getFolderInfo$,
     getUserFolderPermissions$,
     updateUserFolderPermissions$

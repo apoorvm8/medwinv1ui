@@ -10,11 +10,12 @@ import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from './../../shared/LoadingButton';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
 
-const FolderPermission = ({open, onClose, folder, emitPermissionsToParent = null, fromParent=false, permissionRows = null, fromAdd = false}) => {
+const FolderPermission = ({open, onClose, folder, emitPermissionsToParent = null, fromParent=false, permissionRows = null, fromAdd = false, folderToCreateName = null}) => {
   const {isLoading} = useSelector(state => state.folder);
   const dispatch = useDispatch();
   const [stateRows, setStateRows] = useState([])
-
+  const [folderName, setFolderName] = useState('')
+  const [additionalInfo, setAdditionalInfo] = useState('');
   useEffect(() => {
     // Make api hit here just to fetch root
     const getUserFolderPermissions =  async () => {
@@ -23,10 +24,14 @@ const FolderPermission = ({open, onClose, folder, emitPermissionsToParent = null
       dispatch(reset());
       if(fromParent) {
         // Loop through the those rows which were modified before
+        setFolderName(folderToCreateName);
+        setAdditionalInfo(`Permissions will be created for the folder you are about to create.`);
         if(permissionRows) {
           let updatedState = [...permissionRows];
           setStateRows(updatedState);
-        } 
+        }
+      } else {
+        setFolderName(folder.name);
       }
     }
 
@@ -176,19 +181,19 @@ const FolderPermission = ({open, onClose, folder, emitPermissionsToParent = null
         ) 
       },
     },
-    {
-      field: 'permission',
-      headerName: 'Permission',
-      width: 100,
-      sortable: false,
-      renderCell: (params) => {
-        return (
-            <DialogContentText>
-                <FormControlLabel control={<Checkbox checked={params.row.permission} onChange={()=> togglePermission(params, 'permission')} />}/>
-            </DialogContentText>
-        ) 
-      },
-    },
+    // {
+    //   field: 'permission',
+    //   headerName: 'Permission',
+    //   width: 100,
+    //   sortable: false,
+    //   renderCell: (params) => {
+    //     return (
+    //         <DialogContentText>
+    //             <FormControlLabel control={<Checkbox checked={params.row.permission} onChange={()=> togglePermission(params, 'permission')} />}/>
+    //         </DialogContentText>
+    //     ) 
+    //   },
+    // },
     {
       field: 'upload',
       headerName: 'Upload',
@@ -223,12 +228,13 @@ const FolderPermission = ({open, onClose, folder, emitPermissionsToParent = null
       open={open} onClose={() => onClose('permission')} fullWidth maxWidth='lg'
       >
           <DialogTitle>
-              Folder Permission
+              Folder Permission  {folderName ? ` - ${folderName}` : ''}
           </DialogTitle>
           <Divider></Divider>
           <DialogContent>
             <DialogContentText>
-              <b>Note:- Not selecting anything will by default restrict the user to not see folder or perform any actions.</b>
+              <p>Not selecting anything will by default restrict the user to not see folder or perform any actions.</p>
+              <p>{additionalInfo}</p>
             </DialogContentText>
           </DialogContent>
           <DialogContent sx={{height: '80vh'}}>

@@ -14,7 +14,8 @@ import {toast} from 'react-toastify';
 const validationSchema = yup.object({
   name: yup
     .string()
-    .required('Folder name is required.'),
+    .required('Folder name is required.')
+    .matches(/^[a-zA-Z][a-zA-Z0-9_ ]*$/, 'Folder can only be alphanumeric with underscore'),
   resource_module: yup
     .string()
     .required('Folder module is required.'),

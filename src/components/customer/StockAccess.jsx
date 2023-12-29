@@ -193,12 +193,6 @@ const StockAccess = () => {
       renderHeader: () => <strong>Name</strong>
     },
     { 
-      field: 'gstno', headerName: 'GST', width: 200,
-      cellClassName: 'wrap-text cell-font-size',
-      sortable: false,
-      renderHeader: () => <strong>GST</strong>
-    },
-    { 
       field: 'install_date', width: 120, headerName: "Install Dt",
       cellClassName: 'cell-bold',
       sortingOrder: ['desc', 'asc'],
@@ -209,6 +203,12 @@ const StockAccess = () => {
       cellClassName: 'cell-bold',
       sortingOrder: ['desc', 'asc'],
       renderHeader: () => <strong>AMC DT</strong>
+    },
+    { 
+      field: 'remarks', width: 250, headerName: 'Remarks',
+      cellClassName: 'cell-bold',
+      sortable: false,
+      renderHeader: () => <strong>Remarks</strong>
     },
     { 
       field: 'created_at', width: 200, cellClassName: 'cell-bold', headerName: 'Created On',
