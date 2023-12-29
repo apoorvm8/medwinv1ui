@@ -29,6 +29,7 @@ const Backup = () => {
     const [confirmData, setConfirmData] = useState(null);
     const [confirmMsg, setConfirmMsg] = useState("");
     const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
+    const [tableInfoObj, setTableInfoObj] = useState({per_page: 0, total: 0, to:0, from:0});
 
     const statuses = [
       {value: -1, text: "All"},
@@ -56,6 +57,12 @@ const Backup = () => {
               : prevRowCountState,
           );
           setTotalRecords(response.data.backupaccess.total);
+          setTableInfoObj({
+            per_page: response.data.backupaccess.per_page,
+            total: response.data.backupaccess.total,
+            to: response.data.backupaccess.to,
+            from: response.data.backupaccess.from
+          });
           dispatch(reset());
         } catch(error) {
           toast.dismiss();
@@ -277,8 +284,8 @@ const Backup = () => {
           }}
           componentsProps={{ 
             // header: { justifyContent: 'flex-end', page, pageSize, pageCount, updateGrid: updateGrid},
-            footer: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, statuses, onStatusChange, status},
-            toolbar: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, statuses, onStatusChange, status},
+            footer: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, statuses, onStatusChange, status, tableInfoObj},
+            toolbar: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, statuses, onStatusChange, status, tableInfoObj},
           }}
           />
         </CardContent>

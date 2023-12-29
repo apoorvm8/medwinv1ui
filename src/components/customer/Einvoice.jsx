@@ -28,6 +28,7 @@ const Einvoice = () => {
     const [confirmData, setConfirmData] = useState(null);
     const [confirmMsg, setConfirmMsg] = useState("");
     const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
+    const [tableInfoObj, setTableInfoObj] = useState({per_page: 0, total: 0, to:0, from:0});
 
     const statuses = [
       {value: -1, text: "All"},
@@ -54,6 +55,12 @@ const Einvoice = () => {
               : prevRowCountState,
           );
           setTotalRecords(response.data.einvoices.total);
+          setTableInfoObj({
+            per_page: response.data.einvoices.per_page,
+            total: response.data.einvoices.total,
+            to: response.data.einvoices.to,
+            from: response.data.einvoices.from
+          });
           dispatch(reset());
       }
   
@@ -279,8 +286,8 @@ const Einvoice = () => {
             }}
             componentsProps={{ 
               // header: { justifyContent: 'flex-end', page, pageSize, pageCount, updateGrid: updateGrid},
-              footer: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, statuses, onStatusChange, status},
-              toolbar: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, statuses, onStatusChange, status},
+              footer: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, statuses, onStatusChange, status, tableInfoObj},
+              toolbar: { justifyContent: 'space-around', page, pageSize, pageCount, updateGrid: updateGrid, refreshGrid, statuses, onStatusChange, status, tableInfoObj},
             }}
             />
         </CardContent>
