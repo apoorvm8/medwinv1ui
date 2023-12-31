@@ -218,7 +218,7 @@ const Backup = () => {
     },
     { 
       field: 'remarks', width: 250, headerName: 'Remarks',
-      cellClassName: 'cell-bold',
+      cellClassName: 'wrap-text cell-font-size cell-bold',
       sortable: false,
       renderHeader: () => <strong>Remarks</strong>
     },

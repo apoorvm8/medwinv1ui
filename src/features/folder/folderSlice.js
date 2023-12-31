@@ -47,6 +47,15 @@ export const folderSlice = createSlice({
             state.message = '';
             state.fileUploadProgress = 0;
             state.loadingMsg = '';
+        },
+        fullReset : (state) => {
+            state.folders = [];
+            state.isLoading = false;
+            state.isError = false;
+            state.isSuccess = false;
+            state.message = '';
+            state.fileUploadProgress = 0;
+            state.loadingMsg = '';
         }
     },
     extraReducers: (builder) => {
@@ -228,5 +237,5 @@ export const folderSlice = createSlice({
     }
 })
 
-export const {reset}  = folderSlice.actions;
+export const {reset, fullReset}  = folderSlice.actions;
 export default folderSlice.reducer

@@ -214,7 +214,7 @@ const Einvoice = () => {
     },
     { 
       field: 'remarks', width: 250,
-      cellClassName: 'cell-bold',
+      cellClassName: 'wrap-text cell-font-size cell-bold',
       sortable:false,
       headerName: 'Remarks',
       renderHeader: () => <strong>Remarks</strong>

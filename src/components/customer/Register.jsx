@@ -174,6 +174,7 @@ const Register = () => {
     { 
       field: 'remarks', width: 500,
       sortable: false,
+      cellClassName: 'wrap-text cell-font-size',
       headerName: 'Remarks',
       renderHeader: () => <strong>Remarks</strong>
     },

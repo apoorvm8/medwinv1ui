@@ -335,7 +335,8 @@ const Customers = () => {
      },
      { 
       headerName: 'Remarks',
-      field: 'narration', width: 150, sortable: false,
+      cellClassName: 'wrap-text cell-font-size',
+      field: 'narration', width: 250, sortable: false,
       renderHeader: () => <strong>Remarks</strong>
      },
      { 
