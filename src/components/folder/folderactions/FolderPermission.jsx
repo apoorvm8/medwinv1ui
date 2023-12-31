@@ -1,14 +1,13 @@
 import React, {Fragment, useEffect, useState} from 'react'
-import {Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel, Grid} from '@mui/material'
+import {Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, FormControlLabel} from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
-import moment from 'moment/moment';
 import {reset} from '../../../features/folder/folderSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import {toast} from 'react-toastify';
 import {getUserFolderPermissions$, updateUserFolderPermissions$} from '../../../features/folder/folderThunk';
 import SaveIcon from '@mui/icons-material/Save';
 import LoadingButton from './../../shared/LoadingButton';
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import { DataGrid} from '@mui/x-data-grid';
 
 const FolderPermission = ({open, onClose, folder, emitPermissionsToParent = null, fromParent=false, permissionRows = null, fromAdd = false, folderToCreateName = null}) => {
   const {isLoading} = useSelector(state => state.folder);
@@ -43,7 +42,7 @@ const FolderPermission = ({open, onClose, folder, emitPermissionsToParent = null
     let row = params.row;
     let updatedState = stateRows.map((stateRow) => {
       if(stateRow.id === row.id) {
-        let keysToCheck = ['create', 'delete', 'download', 'edit', 'info', 'permission', 'upload', 'view'];
+        let keysToCheck = ['create', 'delete', 'download', 'edit', 'info', 'permission', 'upload', 'view', 'applychild'];
         Object.keys(stateRow).forEach(rowKey => {
           if(keysToCheck.includes(rowKey)) {
             if(row.selectAll) {
@@ -57,7 +56,6 @@ const FolderPermission = ({open, onClose, folder, emitPermissionsToParent = null
       }
       return stateRow
     })
-
     setStateRows(updatedState);
   }
 
@@ -99,128 +97,226 @@ const FolderPermission = ({open, onClose, folder, emitPermissionsToParent = null
      onClose('permission');
   }
 
-
-  const columns = [
-    {
-        field: 'selectAll',
-        headerName: '',
-        width: 20,
+  let columns = [];
+  if(folder.resource_type === 'folder') {
+    columns = [
+      {
+          field: 'selectAll',
+          headerName: '',
+          width: 20,
+          sortable: false,
+          renderCell: (params) => {
+              return (
+                  <DialogContentText>
+                      <FormControlLabel control={<Checkbox checked={params.row.selectAll} onChange={()=> toggle(params)}/>}/>
+                  </DialogContentText>
+              ) 
+          },
+      },
+      { field: 'sno', headerName: 'S.No', width: 50 },
+      { field: 'name', headerName: 'User', width: 150 },
+      {
+        field: 'view',
+        headerName: 'View',
+        width: 70,
         sortable: false,
         renderCell: (params) => {
-            return (
-                <DialogContentText>
-                    <FormControlLabel control={<Checkbox checked={params.row.selectAll} onChange={()=> toggle(params)}/>}/>
-                </DialogContentText>
-            ) 
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.view} onChange={()=> togglePermission(params, 'view')} />} />
+              </DialogContentText>
+          ) 
         },
-    },
-    { field: 'sno', headerName: 'S.No', width: 50 },
-    { field: 'name', headerName: 'User', width: 150 },
-    {
-      field: 'view',
-      headerName: 'View',
-      width: 70,
-      sortable: false,
-      renderCell: (params) => {
-        return (
-            <DialogContentText>
-                <FormControlLabel control={<Checkbox checked={params.row.view} onChange={()=> togglePermission(params, 'view')} />} />
-            </DialogContentText>
-        ) 
       },
-    },
-    {
-      field: 'create',
-      headerName: 'Create',
-      width: 70,
-      sortable: false,
-      renderCell: (params) => {
-        return (
-            <DialogContentText>
-                <FormControlLabel control={<Checkbox checked={params.row.create} onChange={()=> togglePermission(params, 'create')} />} />
-            </DialogContentText>
-        ) 
+      {
+        field: 'create',
+        headerName: 'Create',
+        width: 70,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.create} onChange={()=> togglePermission(params, 'create')} />} />
+              </DialogContentText>
+          ) 
+        },
       },
-    },
-    {
-      field: 'edit',
-      headerName: 'Edit',
-      width: 70,
-      sortable: false,
-      renderCell: (params) => {
-        return (
-            <DialogContentText>
-                <FormControlLabel control={<Checkbox checked={params.row.edit} onChange={()=> togglePermission(params, 'edit')} />}/>
-            </DialogContentText>
-        ) 
+      {
+        field: 'edit',
+        headerName: 'Edit',
+        width: 70,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.edit} onChange={()=> togglePermission(params, 'edit')} />}/>
+              </DialogContentText>
+          ) 
+        },
       },
-    },
-    {
-      field: 'info',
-      headerName: 'Info',
-      width: 70,
-      sortable: false,
-      renderCell: (params) => {
-        return (
-            <DialogContentText>
-                <FormControlLabel control={<Checkbox checked={params.row.info} onChange={()=> togglePermission(params, 'info')} />}/>
-            </DialogContentText>
-        ) 
+      {
+        field: 'info',
+        headerName: 'Info',
+        width: 70,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.info} onChange={()=> togglePermission(params, 'info')} />}/>
+              </DialogContentText>
+          ) 
+        },
       },
-    },
-    {
-      field: 'delete',
-      headerName: 'Delete',
-      width: 70,
-      sortable: false,
-      renderCell: (params) => {
-        return (
-            <DialogContentText>
-                <FormControlLabel control={<Checkbox checked={params.row.delete} onChange={()=> togglePermission(params, 'delete')} />}/>
-            </DialogContentText>
-        ) 
+      {
+        field: 'delete',
+        headerName: 'Delete',
+        width: 70,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.delete} onChange={()=> togglePermission(params, 'delete')} />}/>
+              </DialogContentText>
+          ) 
+        },
       },
-    },
-    // {
-    //   field: 'permission',
-    //   headerName: 'Permission',
-    //   width: 100,
-    //   sortable: false,
-    //   renderCell: (params) => {
-    //     return (
-    //         <DialogContentText>
-    //             <FormControlLabel control={<Checkbox checked={params.row.permission} onChange={()=> togglePermission(params, 'permission')} />}/>
-    //         </DialogContentText>
-    //     ) 
-    //   },
-    // },
-    {
-      field: 'upload',
-      headerName: 'Upload',
-      width: 100,
-      sortable: false,
-      renderCell: (params) => {
-        return (
-            <DialogContentText>
-                <FormControlLabel control={<Checkbox checked={params.row.upload} onChange={()=> togglePermission(params, 'upload')} />}/>
-            </DialogContentText>
-        ) 
+      // {
+      //   field: 'permission',
+      //   headerName: 'Permission',
+      //   width: 100,
+      //   sortable: false,
+      //   renderCell: (params) => {
+      //     return (
+      //         <DialogContentText>
+      //             <FormControlLabel control={<Checkbox checked={params.row.permission} onChange={()=> togglePermission(params, 'permission')} />}/>
+      //         </DialogContentText>
+      //     ) 
+      //   },
+      // },
+      {
+        field: 'upload',
+        headerName: 'Upload',
+        width: 100,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.upload} onChange={()=> togglePermission(params, 'upload')} />}/>
+              </DialogContentText>
+          ) 
+        },
       },
-    },
-    {
-      field: 'download',
-      headerName: 'Download',
-      width: 100,
-      sortable: false,
-      renderCell: (params) => {
-        return (
-            <DialogContentText>
-                <FormControlLabel control={<Checkbox checked={params.row.download} onChange={()=> togglePermission(params, 'download')} />}/>
-            </DialogContentText>
-        ) 
+      {
+        field: 'download',
+        headerName: 'Download',
+        width: 100,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.download} onChange={()=> togglePermission(params, 'download')} />}/>
+              </DialogContentText>
+          ) 
+        },
       },
-    },
-  ];
+      {
+        field: 'applychild',
+        headerName: 'Apply To Children',
+        width: 150,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.applychild} onChange={()=> togglePermission(params, 'applychild')} />}/>
+              </DialogContentText>
+          ) 
+        },
+      },
+    ];
+  } else {
+    columns = [
+      {
+          field: 'selectAll',
+          headerName: '',
+          width: 20,
+          sortable: false,
+          renderCell: (params) => {
+              return (
+                  <DialogContentText>
+                      <FormControlLabel control={<Checkbox checked={params.row.selectAll} onChange={()=> toggle(params)}/>}/>
+                  </DialogContentText>
+              ) 
+          },
+      },
+      { field: 'sno', headerName: 'S.No', width: 50 },
+      { field: 'name', headerName: 'User', width: 150 },
+      {
+        field: 'view',
+        headerName: 'View',
+        width: 70,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.view} onChange={()=> togglePermission(params, 'view')} />} />
+              </DialogContentText>
+          ) 
+        },
+      },
+      {
+        field: 'info',
+        headerName: 'Info',
+        width: 70,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.info} onChange={()=> togglePermission(params, 'info')} />}/>
+              </DialogContentText>
+          ) 
+        },
+      },
+      {
+        field: 'delete',
+        headerName: 'Delete',
+        width: 70,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.delete} onChange={()=> togglePermission(params, 'delete')} />}/>
+              </DialogContentText>
+          ) 
+        },
+      },
+      // {
+      //   field: 'permission',
+      //   headerName: 'Permission',
+      //   width: 100,
+      //   sortable: false,
+      //   renderCell: (params) => {
+      //     return (
+      //         <DialogContentText>
+      //             <FormControlLabel control={<Checkbox checked={params.row.permission} onChange={()=> togglePermission(params, 'permission')} />}/>
+      //         </DialogContentText>
+      //     ) 
+      //   },
+      // },
+      {
+        field: 'download',
+        headerName: 'Download',
+        width: 100,
+        sortable: false,
+        renderCell: (params) => {
+          return (
+              <DialogContentText>
+                  <FormControlLabel control={<Checkbox checked={params.row.download} onChange={()=> togglePermission(params, 'download')} />}/>
+              </DialogContentText>
+          ) 
+        },
+      },
+    ];
+  }
 
   return (
     <Fragment>
@@ -233,8 +329,9 @@ const FolderPermission = ({open, onClose, folder, emitPermissionsToParent = null
           <Divider></Divider>
           <DialogContent>
             <DialogContentText>
-              <p>Not selecting anything will by default restrict the user to not see folder or perform any actions.</p>
-              <p>{additionalInfo}</p>
+              <span>Not selecting anything will by default restrict the user to not see folder or perform any actions.</span>
+              <br/><br/>
+              <span>{additionalInfo}</span>
             </DialogContentText>
           </DialogContent>
           <DialogContent sx={{height: '80vh'}}>

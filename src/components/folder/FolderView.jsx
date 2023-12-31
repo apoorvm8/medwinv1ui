@@ -3,7 +3,7 @@ import  List  from '@mui/material/List';
 import FolderItem from './FolderItem';
 import { useSelector, useDispatch } from 'react-redux';
 import { getChildren } from './../../features/folder/folderThunk';
-import {reset} from '../../features/folder/folderSlice';
+import {fullReset, reset} from '../../features/folder/folderSlice';
 import { Backdrop, CircularProgress } from '@mui/material';
 import Spinner from '../shared/Spinner';
 import {toast} from 'react-toastify';
@@ -12,7 +12,7 @@ function FolderView() {
 
   const dispatch = useDispatch();
   // Use the global folders state from reducer
-  const {folders} = useSelector(state => state.folder);
+  let {folders} = useSelector(state => state.folder);
   const {isLoading} = useSelector(state => state.folder);
   const {user} = useSelector(state => state.auth);
 
@@ -32,6 +32,11 @@ function FolderView() {
     if(folders.length === 0 && user) {
       getRoot();
     }
+
+    return () => {
+      dispatch(fullReset());
+    }
+
     // eslint-disable-next-line
   }, []);
 

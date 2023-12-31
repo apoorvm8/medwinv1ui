@@ -220,7 +220,7 @@ const Whatsapp = () => {
     { 
       headerName: 'Remarks',
       field: 'remarks', width: 250,
-      cellClassName: 'cell-bold',
+      cellClassName: 'wrap-text cell-font-size cell-bold',
       sortable: false,
       renderHeader: () => <strong>Remarks</strong>
     },
