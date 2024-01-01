@@ -19,7 +19,10 @@ function FolderInfo({open, onClose, folder}) {
         const getFolderInfo =  async () => {
             try {
                 let response = await dispatch(getFolderInfo$({id: folder.id})).unwrap();
-                setFolderObj(response.data.folder);
+                let result = response.data.folder;
+                // Calculate size
+                result.file_size = niceBytes(result.file_size);
+                setFolderObj(result);
           } catch(error) {
             toast.dismiss();
             toast.error(error);
@@ -31,6 +34,16 @@ function FolderInfo({open, onClose, folder}) {
         // eslint-disable-next-line
       }, []);
 
+    const niceBytes = (x) => {
+        const units = ['bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+        let l = 0, n = parseInt(x, 10) || 0;
+      
+        while(n >= 1024 && ++l){
+            n = n/1024;
+        }
+        
+        return(n.toFixed(n < 10 && l > 0 ? 1 : 0) + ' ' + units[l]);
+    }
     return (
         <Dialog
             open={open} onClose={() => onClose('info')} fullWidth maxWidth='md'
@@ -46,7 +59,7 @@ function FolderInfo({open, onClose, folder}) {
                                 <b>Name:</b> {folderObj.name}
                             </Grid>
                             <Grid item md={4}>
-                                <b>Size (In MB):</b> {folderObj.file_size}
+                                <b>Size:</b> {folderObj.file_size}
                             </Grid>
                             <Grid item md={2}>
                                 <b>Type</b> {folderObj.resource_type}
@@ -106,5 +119,4 @@ function FolderInfo({open, onClose, folder}) {
         </Dialog>
   )
 }
-
 export default FolderInfo
