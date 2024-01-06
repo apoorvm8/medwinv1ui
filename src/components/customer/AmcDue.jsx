@@ -229,6 +229,7 @@ const AmcDue = () => {
             hideFooterSelectedRowCount
             density='comfortable'
             paginationMode="server"
+            sortingMode="server"
             disableColumnMenu={true}
             showColumnRightBorder={true}
             showCellRightBorder={true}
