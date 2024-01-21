@@ -5,7 +5,6 @@ import {customerAction$, getCustomerStockAccess$} from '../../features/customer/
 import { DataGrid} 
 from '@mui/x-data-grid';
 import { Tooltip, IconButton, CardHeader, CardContent, Card } from '@mui/material';
-import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import {toast} from 'react-toastify';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import CheckIcon from '@mui/icons-material/Check';
@@ -28,7 +27,7 @@ const StockAccess = () => {
     const [confirmDialog, setConfirmDialog] = useState(false);
     const [confirmData, setConfirmData] = useState(null);
     const [confirmMsg, setConfirmMsg] = useState("");
-    const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
+    const [sortOrder, setSortOrder] = useState({field: 'created_at', sort: 'desc'})
     const [tableInfoObj, setTableInfoObj] = useState({per_page: 0, total: 0, to:0, from:0});
 
     const statuses = [
@@ -39,6 +38,7 @@ const StockAccess = () => {
     const superUser = process.env.REACT_APP_SUPER_USER;
 
     useEffect(() => {
+      document.title = 'Stock Access';
       // Make api hit here just to fetch root
       const getCustomerStockAccess =  async () => {
           let response = await dispatch(getCustomerStockAccess$({
@@ -177,7 +177,7 @@ const StockAccess = () => {
               user?.role === superUser || user?.permissions.includes('customer_stockaccess_toggle') ? (
                 <Tooltip title={`${stockAccessStatus ? 'Disable' : 'Enable'} Stock Access for ${params.row.acctno}`}>
                   <IconButton sx={{color: stockAccessStatus ? '#28a745' : '#dc3545'}} onClick={() => customerAction('stockaccess', params.row)}>
-                      <SyncAltIcon/>
+                    <span style={{fontWeight: 'bold', fontSize: '19px'}}>S</span>
                   </IconButton>
                 </Tooltip>
               ) : null
@@ -190,7 +190,7 @@ const StockAccess = () => {
       field: 'acctno',
       width: 80,
       headerName: 'C_ID',
-      sortingOrder: ['asc', 'desc'],
+      sortingOrder: ['desc', 'asc'],
       renderHeader: () => <strong>C_ID</strong>
     },
     { 
@@ -219,7 +219,7 @@ const StockAccess = () => {
     },
     { 
       field: 'created_at', width: 200, cellClassName: 'cell-bold', headerName: 'Created On',
-      sortingOrder: ['desc', 'asc'],
+      sortingOrder: ['asc', 'desc'],
       renderHeader: () => <strong>Created On</strong>
     },
   ];

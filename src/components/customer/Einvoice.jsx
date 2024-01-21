@@ -5,7 +5,6 @@ import {customerAction$, getCustomerEinvoices$} from '../../features/customer/cu
 import { DataGrid} 
 from '@mui/x-data-grid';
 import { Tooltip, IconButton, CardHeader, Card, CardContent } from '@mui/material';
-import ExplicitIcon from '@mui/icons-material/Explicit';
 import {toast} from 'react-toastify';
 import ConfirmDialog from '../shared/ConfirmDialog';
 import CheckIcon from '@mui/icons-material/Check';
@@ -27,7 +26,7 @@ const Einvoice = () => {
     const [confirmDialog, setConfirmDialog] = useState(false);
     const [confirmData, setConfirmData] = useState(null);
     const [confirmMsg, setConfirmMsg] = useState("");
-    const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
+    const [sortOrder, setSortOrder] = useState({field: 'created_at', sort: 'desc'})
     const [tableInfoObj, setTableInfoObj] = useState({per_page: 0, total: 0, to:0, from:0});
 
     const statuses = [
@@ -38,6 +37,7 @@ const Einvoice = () => {
     const superUser = process.env.REACT_APP_SUPER_USER;
 
     useEffect(() => {
+      document.title = 'E-Invoice';
       // Make api hit here just to fetch root
       const getCustomerEinvoices =  async () => {
           let response = await dispatch(getCustomerEinvoices$({
@@ -176,7 +176,7 @@ const Einvoice = () => {
               (
                 <Tooltip title={`${eInvoiceStatus ? 'Disable' : 'Enable'} E-Invoice for ${params.row.acctno}`}>
                   <IconButton sx={{color: eInvoiceStatus ? '#28a745' : '#dc3545'}} onClick={() => customerAction('einvoice', params.row)}>
-                      <ExplicitIcon/>
+                    <span style={{fontWeight: 'bold', fontSize: '19px'}}>E</span>
                   </IconButton>
                 </Tooltip>
               ) : null
@@ -188,7 +188,7 @@ const Einvoice = () => {
     {
       field: 'acctno',
       width: 80,
-      sortOrder: ['asc', 'desc'],
+      sortOrder: ['desc', 'asc'],
       headerName: 'C_ID',
       renderHeader: () => <strong>C_ID</strong>
     },
@@ -226,7 +226,7 @@ const Einvoice = () => {
     },
     { 
       field: 'created_at', width: 200, cellClassName: 'cell-bold',
-      sortOrder: ['desc', 'asc'],
+      sortOrder: ['asc', 'desc'],
       headerName: 'Created On',
       renderHeader: () => <strong>Created On</strong>
     },
