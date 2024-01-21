@@ -6,7 +6,6 @@ import { DataGrid}
 from '@mui/x-data-grid';
 import { Tooltip, IconButton, Card, CardHeader, CardContent } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
-import ExplicitIcon from '@mui/icons-material/Explicit';
 import SyncAltIcon from '@mui/icons-material/SyncAlt';
 import BackupIcon from '@mui/icons-material/Backup';
 import LockOpenIcon from '@mui/icons-material/LockOpen';
@@ -45,6 +44,7 @@ const Customers = () => {
   ]
 
   useEffect(() => {
+    document.title = 'Customer Master';
     // Make api hit here just to fetch root
     const getCustomers =  async () => {
         let response = await dispatch(getCustomers$({
@@ -121,6 +121,16 @@ const Customers = () => {
       setConfirmDialog(true);
     }
 
+    if(actionType === "backupaccess") {
+      setConfirmMsg(`Are you sure want to ${row.customer_backup?.active ? 'disable' : 'enable'} backup access for account ${row.acctno} ?`);
+      setConfirmDialog(true);
+    }
+
+    if(actionType === "stockaccess") {
+      setConfirmMsg(`Are you sure want to ${row.customer_stock_access?.active ? 'disable' : 'enable'} stock access for account ${row.acctno} ?`);
+      setConfirmDialog(true);
+    }
+
     if(actionType === 'adminFolderAction' || actionType === 'adminFolderActionStock') {
       // Fetch the parent backup folder by the slug
       let slug = process.env.REACT_APP_CUSTOMER_BACKUP_SLUG;
@@ -153,6 +163,7 @@ const Customers = () => {
       } catch (error) {
         toast.dismiss();
         toast.error(error);
+        refreshGrid();
         setCreateFolderOpen(false);
       }
       dispatch(reset());
@@ -180,6 +191,7 @@ const Customers = () => {
         setConfirmMsg("");
       } catch(error) {
         toast.error(error);
+        refreshGrid();
         setConfirmData(null);
         setConfirmMsg("");
       }
@@ -218,7 +230,7 @@ const Customers = () => {
     {
       headerName: 'Action',
       field: 'action',
-      width: 130,
+      width: 190,
       align: 'left',
       headerAlign: 'left',
       sortable: false,
@@ -227,17 +239,9 @@ const Customers = () => {
       renderCell: (params) => {
         let eInvoiceStatus = params.row.e_invoice?.active;
         let customerWhatsappStatus = params.row.customer_whatsapp?.active;
+        let cBackup = params.row.customer_backup;
+        let cStockAccess = params.row.customer_stock_access;
 
-        if(eInvoiceStatus === 0) {
-          // If it is disabled we want to remove it from the list
-          eInvoiceStatus = 1;
-        }
-        
-        if(customerWhatsappStatus === 0) {
-          // If it is disabled we want to remove it from the list
-          customerWhatsappStatus = 1;
-        }
-    
         return (
           <Fragment>
             {
@@ -256,24 +260,66 @@ const Customers = () => {
               ) : null 
             }
             {
-              (user?.role === superUser || user?.permissions.includes('customer_master_einvoice')) && params.row.activestatus === "Y" && !eInvoiceStatus ?  (
+              (user?.role === superUser || user?.permissions.includes('customer_master_einvoice')) && params.row.activestatus === "Y" ?  (
                 <Fragment>
                     <Tooltip title={`${eInvoiceStatus ? 'Disable' : 'Enable'} E-Invoice for ${params.row.acctno}`}>
                     <IconButton sx={{color: eInvoiceStatus ? '#28a745' : '#dc3545'}} onClick={() => customerAction('einvoice', params.row)}>
-                      <ExplicitIcon/>
+                      <span style={{fontWeight: 'bold', fontSize: '19px'}}>E</span>
                     </IconButton>
                   </Tooltip>
                 </Fragment>
               ) : null
             }
             {
-              (user?.role === superUser || user?.permissions.includes('customer_whatsapp_toggle')) && params.row.activestatus === "Y" && !customerWhatsappStatus ?  (
+              (user?.role === superUser || user?.permissions.includes('customer_whatsapp_toggle')) && params.row.activestatus === "Y" ?  (
                 <Fragment>
                     <Tooltip title={`${customerWhatsappStatus ? 'Disable' : 'Enable'} Whatsapp Service for ${params.row.acctno}`}>
                     <IconButton sx={{color: customerWhatsappStatus ? '#28a745' : '#dc3545'}} onClick={() => customerAction('customerwhatsappaccess', params.row)}>
                       <WhatsAppIcon/>
                     </IconButton>
                   </Tooltip>
+                </Fragment>
+              ) : null
+            }
+            {
+              (user?.role === superUser || user?.permissions.includes('customer_backup_toggle')) && params.row.activestatus === "Y"  ? (
+                <Fragment>
+                  {
+                    !cBackup ? (
+                    <Tooltip title={`Backup need to be turned on for ${params.row.acctno} first`}>
+                      <IconButton sx={{color: 'black'}}>
+                        <span style={{fontWeight: 'bold', fontSize: '19px'}}>B</span>
+                      </IconButton>
+                    </Tooltip>
+                    ) : (
+                    <Tooltip title={`${cBackup.active ? 'Disable' : 'Enable'} Backup Access for ${params.row.acctno}`}>
+                      <IconButton sx={{color: cBackup.active ? '#28a745' : '#dc3545'}} onClick={() => customerAction('backupaccess', params.row)}>
+                        <span style={{fontWeight: 'bold', fontSize: '19px'}}>B</span>
+                      </IconButton>
+                    </Tooltip>
+                    )
+                  }
+                </Fragment>
+              ) : null
+            }
+            {
+              (user?.role === superUser || user?.permissions.includes('customer_stockaccess_toggle')) && params.row.activestatus === "Y" ? (
+                <Fragment>
+                  {
+                    !cStockAccess ? (
+                    <Tooltip title={`Stock Access need to be turned on for ${params.row.acctno} first`}>
+                      <IconButton sx={{color: 'black'}}>
+                        <span style={{fontWeight: 'bold', fontSize: '19px'}}>S</span>
+                      </IconButton>
+                    </Tooltip>
+                    ) : (
+                    <Tooltip title={`${cStockAccess.active ? 'Disable' : 'Enable'} Stock Access for ${params.row.acctno}`}>
+                      <IconButton sx={{color: cStockAccess.active ? '#28a745' : '#dc3545'}} onClick={() => customerAction('stockaccess', params.row)}>
+                          <span style={{fontWeight: 'bold', fontSize: '19px'}}>S</span>
+                      </IconButton>
+                    </Tooltip>
+                    )
+                  }
                 </Fragment>
               ) : null
             }

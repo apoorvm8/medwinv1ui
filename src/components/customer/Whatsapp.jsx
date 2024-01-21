@@ -27,7 +27,7 @@ const Whatsapp = () => {
     const [confirmDialog, setConfirmDialog] = useState(false);
     const [confirmData, setConfirmData] = useState(null);
     const [confirmMsg, setConfirmMsg] = useState("");
-    const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
+    const [sortOrder, setSortOrder] = useState({field: 'created_at', sort: 'desc'})
     const [tableInfoObj, setTableInfoObj] = useState({per_page: 0, total: 0, to:0, from:0});
 
     const statuses = [
@@ -38,6 +38,7 @@ const Whatsapp = () => {
     const superUser = process.env.REACT_APP_SUPER_USER;
 
     useEffect(() => {
+      document.title = 'Customer Whatsapp';
       // Make api hit here just to fetch root
       const getCustomerWhatsapps =  async () => {
           try {
@@ -194,7 +195,7 @@ const Whatsapp = () => {
       field: 'acctno',
       headerName: 'C_ID',
       width: 80,
-      sortingOrder: ['asc', 'desc'],
+      sortingOrder: ['desc', 'asc'],
       renderHeader: () => <strong>C_ID</strong>
     },
     { 
@@ -227,7 +228,7 @@ const Whatsapp = () => {
     { 
       headerName: 'Created On',
       field: 'created_at', width: 200, cellClassName: 'cell-bold',
-      sortingOrder: ['desc', 'asc'],
+      sortingOrder: ['asc', 'desc'],
       renderHeader: () => <strong>Created On</strong>
     },
   ];
