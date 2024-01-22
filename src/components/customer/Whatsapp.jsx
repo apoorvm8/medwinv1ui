@@ -178,7 +178,7 @@ const Whatsapp = () => {
         return (
           <Fragment>
             {
-              user?.role === superUser || user?.permissions.includes('customer_whatspp_toggle') ?
+              user?.role === superUser || user?.permissions.includes('customer_whatsapp_toggle') ?
               (
                 <Tooltip title={`${whatsappStatus ? 'Disable' : 'Enable'} Whatsapp Service for ${params.row.acctno}`}>
                   <IconButton sx={{color: whatsappStatus ? '#28a745' : '#dc3545'}} onClick={() => customerAction('customerwhatsappaccess', params.row)}>
