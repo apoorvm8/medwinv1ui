@@ -10,6 +10,8 @@ import ConfirmDialog from '../shared/ConfirmDialog';
 import CheckIcon from '@mui/icons-material/Check';
 import {styles, CustomToolbar} from './../shared/CustomToolbar';
 import DeleteIcon  from '@mui/icons-material/Delete';
+import KeyIcon from '@mui/icons-material/Key';
+import LockResetIcon from '@mui/icons-material/LockReset';
 
 const Backup = () => {
     const {isLoading} = useSelector(state => state.customer);
@@ -168,7 +170,7 @@ const Backup = () => {
     {
       field: 'action',
       headerName: 'Action',
-      width: 80,
+      width: 120,
       align: 'left',
       headerAlign: 'left',
       sortable: false,
@@ -176,17 +178,31 @@ const Backup = () => {
       renderHeader: () => <strong>Actions</strong>,
       renderCell: (params) => {
         let backupAccessStatus = params.row.active;
+        let hasSetPassword = params.row.hasSetPassword;
         return (
           <Fragment>
-            {
-              user?.role === superUser || user?.permissions.includes('customer_backup_toggle') ? (
-                <Tooltip title={`${backupAccessStatus ? 'Disable' : 'Enable'} Backup Access for ${params.row.acctno}`}>
-                  <IconButton sx={{color: backupAccessStatus ? '#28a745' : '#dc3545'}} onClick={() => customerAction('backupaccess', params.row)}>
-                    <span style={{fontWeight: 'bold', fontSize: '19px'}}>B</span>
-                  </IconButton>
-                </Tooltip>
-              ) : null
-            }
+            <Fragment>
+              {
+                user?.role === superUser || user?.permissions.includes('customer_backup_toggle') ? (
+                  <Tooltip title={`${backupAccessStatus ? 'Disable' : 'Enable'} Backup Access for ${params.row.acctno}`}>
+                    <IconButton sx={{color: backupAccessStatus ? '#28a745' : '#dc3545'}} onClick={() => customerAction('backupaccess', params.row)}>
+                      <span style={{fontWeight: 'bold', fontSize: '19px'}}>B</span>
+                    </IconButton>
+                  </Tooltip>
+                ) : null
+              }
+            </Fragment>
+            <Fragment>
+              {
+                user?.role === superUser || user?.permissions.includes('customer_backup_toggle') ? (
+                  <Tooltip title={`${hasSetPassword ? 'Reset' : 'Set'} Password for ${params.row.acctno} for customer login`}>
+                    <IconButton sx={{color: 'black'}} onClick={() => customerAction('managepassword', params.row)}>
+                      {hasSetPassword ? (<LockResetIcon/>) : (<KeyIcon/>)}
+                    </IconButton>
+                  </Tooltip>
+                ) : null
+              }
+            </Fragment>
           </Fragment>
         )
       }
