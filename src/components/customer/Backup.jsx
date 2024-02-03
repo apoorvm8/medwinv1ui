@@ -12,6 +12,7 @@ import {styles, CustomToolbar} from './../shared/CustomToolbar';
 import DeleteIcon  from '@mui/icons-material/Delete';
 import KeyIcon from '@mui/icons-material/Key';
 import LockResetIcon from '@mui/icons-material/LockReset';
+import SetCustomerPassword from './customeractions/SetCustomerPassword';
 
 const Backup = () => {
     const {isLoading} = useSelector(state => state.customer);
@@ -31,6 +32,8 @@ const Backup = () => {
     const [confirmMsg, setConfirmMsg] = useState("");
     const [sortOrder, setSortOrder] = useState({field: 'created_at', sort: 'desc'})
     const [tableInfoObj, setTableInfoObj] = useState({per_page: 0, total: 0, to:0, from:0});
+    const [passwordDialog, setPasswordDialog] = useState(false);
+    const [customer, setCustomer] = useState(null);
 
     const statuses = [
       {value: -1, text: "All"},
@@ -107,6 +110,12 @@ const Backup = () => {
         setConfirmMsg(`Deleting this will also delete the backup folder of customer ${row.acctno} inside customerbackups folder. Please click yes to confirm.`);
         setConfirmDialog(true);
       }
+
+      if(actionType === 'updatepassword') {
+        setCustomer(row);
+        setPasswordDialog(true);
+        return;
+      }
   
       setConfirmData({
         actionType: actionType,
@@ -138,6 +147,13 @@ const Backup = () => {
       } else {
         setConfirmData(null);
         setConfirmMsg("");
+      }
+    }
+
+    const handleClosePasswordDialog = (res) => {
+      setPasswordDialog(false);
+      if(res) {
+        refreshGrid();
       }
     }
 
@@ -196,7 +212,7 @@ const Backup = () => {
               {
                 user?.role === superUser || user?.permissions.includes('customer_backup_toggle') ? (
                   <Tooltip title={`${hasSetPassword ? 'Reset' : 'Set'} Password for ${params.row.acctno} for customer login`}>
-                    <IconButton sx={{color: 'black'}} onClick={() => customerAction('managepassword', params.row)}>
+                    <IconButton sx={{color: 'black'}} onClick={() => customerAction('updatepassword', params.row)}>
                       {hasSetPassword ? (<LockResetIcon/>) : (<KeyIcon/>)}
                     </IconButton>
                   </Tooltip>
@@ -318,6 +334,16 @@ const Backup = () => {
                     closeConfirmDialog={handleCloseConfirmDialog}
                     open={confirmDialog}
                     confirmData={confirmData}
+                />
+            )
+        }
+         {passwordDialog && 
+            (
+                <SetCustomerPassword 
+                    icon={<CheckIcon/>}
+                    closePasswordDialog={handleClosePasswordDialog}
+                    open={passwordDialog}
+                    customer={customer}
                 />
             )
         }
