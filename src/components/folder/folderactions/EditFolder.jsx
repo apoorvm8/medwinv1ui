@@ -1,11 +1,10 @@
-import {Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Box, MenuItem, Select, InputLabel, FormControl, FormHelperText, Alert, Collapse, IconButton, Typography} from '@mui/material'
+import {Button, Dialog, DialogActions, DialogContent,DialogTitle, TextField, Box, MenuItem, Select, InputLabel, FormControl, FormHelperText, Typography} from '@mui/material'
 import React, {useEffect, useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { collapseFolder, createFolder, editFolder, getChildren } from './../../../features/folder/folderThunk';
+import { collapseFolder, editFolder, getChildren } from './../../../features/folder/folderThunk';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 import LoadingButton from './../../shared/LoadingButton';
-import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 import CloseIcon from '@mui/icons-material/Close';
 import {reset} from '../../../features/folder/folderSlice';
 import EditIcon from '@mui/icons-material/Edit';
@@ -106,7 +105,7 @@ function EditFolder({open, onClose, folder}) {
             >
               <MenuItem value={"software"}>Software</MenuItem>
               <MenuItem value={"backup"}>Backup</MenuItem>
-              <MenuItem value={"einvoice"}>E-Invoice</MenuItem>
+              <MenuItem value={"stock"}>Stock</MenuItem>
             </Select>
             <FormHelperText error={true}>{formik.touched.resource_module && formik.errors.resource_module}</FormHelperText>
           </FormControl>
