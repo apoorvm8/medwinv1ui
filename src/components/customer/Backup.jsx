@@ -13,6 +13,7 @@ import DeleteIcon  from '@mui/icons-material/Delete';
 import KeyIcon from '@mui/icons-material/Key';
 import LockResetIcon from '@mui/icons-material/LockReset';
 import SetCustomerPassword from './customeractions/SetCustomerPassword';
+import CreateNewFolderIcon from '@mui/icons-material/CreateNewFolder';
 
 const Backup = () => {
     const {isLoading} = useSelector(state => state.customer);
@@ -115,6 +116,12 @@ const Backup = () => {
         setCustomer(row);
         setPasswordDialog(true);
         return;
+      }
+
+      if(actionType === 'createotherfolder') {
+        setConfirmMsg(`Are you sure want to create other folder for account ${row.acctno} ? If you select Yes, then a folder
+        with the name other will be created inside this customer's backup folder.`)
+        setConfirmDialog(true);
       }
   
       setConfirmData({
@@ -265,7 +272,7 @@ const Backup = () => {
     columns.splice(1, 0, {
       field: 'admin_action',
       headerName: 'Admin',
-      width: 80,
+      width: 100,
       align: 'left',
       headerAlign: 'left',
       sortable: false,
@@ -273,11 +280,22 @@ const Backup = () => {
       renderHeader: () => <strong>Admin</strong>,
       renderCell: (params) => {
         return (
-          <Tooltip title={`Delete Backup Access for ${params.row.acctno}`}>
-          <IconButton sx={{color: '#dc3545'}} onClick={() => customerAction('backupdelete', params.row)}>
-              <DeleteIcon/>
-          </IconButton>
-        </Tooltip>
+          <Fragment>
+            <Tooltip title={`Delete Backup Access for ${params.row.acctno}`}>
+              <IconButton sx={{color: '#dc3545'}} onClick={() => customerAction('backupdelete', params.row)}>
+                  <DeleteIcon/>
+              </IconButton>
+            </Tooltip>
+            {
+              params.row.hasOtherFolder ? null : (
+                <Tooltip title={`Create other folder for ${params.row.acctno}`}>
+                  <IconButton sx={{color: '#f3b51c'}} onClick={() => customerAction('createotherfolder', params.row)}>
+                      <CreateNewFolderIcon/>
+                  </IconButton>
+                </Tooltip>
+              )
+            }
+          </Fragment>
         )
       }
     });
