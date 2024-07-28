@@ -2,11 +2,13 @@ import { combineReducers, configureStore } from '@reduxjs/toolkit';
 import folderReducer from '../features/folder/folderSlice';
 import authReducer from '../features/auth/authSlice';
 import customerReducer from '../features/customer/customerSlice';
+import messageReducer from '../features/messages/messageSlice';
 
 const combinedReducer = combineReducers({
   folder: folderReducer,
   auth: authReducer,
-  customer: customerReducer
+  customer: customerReducer,
+  message: messageReducer,
 });
 
 const rootReducer = (state, action) => {

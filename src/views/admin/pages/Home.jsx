@@ -1,4 +1,4 @@
-import {Box, Button, Card, CardActions, CardContent, CardHeader, Grid, Typography} from '@mui/material';
+import {Box, Button, Card, CardContent, Grid, Typography} from '@mui/material';
 import React, {Fragment, useEffect, useState} from 'react'
 import {useDispatch, useSelector} from 'react-redux';
 import GroupIcon from '@mui/icons-material/Group';
@@ -11,6 +11,7 @@ import {Link} from 'react-router-dom';
 import {reset} from '../../../features/customer/customerSlice';
 import {getCustomerDashboardDetails$} from '../../../features/customer/customerThunk';
 import {toast} from 'react-toastify';
+import {unreadMsgCnt} from '../../../features/messages/messageSlice';
 
 function Home() {
   const {user} = useSelector(state => state.auth);
@@ -30,6 +31,9 @@ function Home() {
         try {
           let response = await dispatch(getCustomerDashboardDetails$()).unwrap();
           setDashboardDetails(response.data.dashboarddetails);
+          if(response.data.dashboarddetails.messages) {
+            dispatch(unreadMsgCnt(response.data.dashboarddetails.messages))
+          }
         } catch(error) {
           toast.error(error);
         }
