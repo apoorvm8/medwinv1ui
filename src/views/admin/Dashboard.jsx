@@ -22,7 +22,7 @@ import {Link} from 'react-router-dom';
 import  ListItemButton  from '@mui/material/ListItemButton';
 import ReceiptIcon from '@mui/icons-material/Receipt';
 import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
-import { Button, Collapse, useMediaQuery, useTheme } from '@mui/material';
+import { Badge, Button, Collapse, useMediaQuery, useTheme } from '@mui/material';
 import SidenavListItem from './../../models/SidenavListItem';
 import styled from '@emotion/styled';
 import ContactsIcon from '@mui/icons-material/Contacts';
@@ -37,6 +37,7 @@ import {toast} from 'react-toastify';
 import {useAuthStatus} from '../../hooks/useAuthStatus';
 import Spinner from '../../components/shared/Spinner';
 import CurrencyRupeeIcon from '@mui/icons-material/CurrencyRupee';
+import EmailIcon from '@mui/icons-material/Email';
 
 const drawerWidth = 250;
 
@@ -147,6 +148,7 @@ export default function Dashboard(props) {
   const matches = useMediaQuery(theme.breakpoints.up('sm'));
   const {loggedIn, checkingStatus, setCheckingStatus, setTriggerEffect} = useAuthStatus();
   const {logoutLoader, user} = useSelector(state => state.auth);
+  const {unreadMessages} = useSelector(state => state.message);
 
   const location = useLocation();
   const dispatch = useDispatch();
@@ -212,6 +214,12 @@ export default function Dashboard(props) {
     if(location.pathname === '/admin/amc-due') {
       setSelectedIndex(9);
       setPermissionToCheck('customer_amcdue_view');
+      setShouldCheckPermission(true);
+    }
+
+    if(location.pathname === '/admin/messages') {
+      setSelectedIndex(10);
+      setPermissionToCheck('messages_view');
       setShouldCheckPermission(true);
     }
 
@@ -302,6 +310,11 @@ export default function Dashboard(props) {
         ]),
         new SidenavListItem(8, 'Folder', '/admin/folder', <FolderIcon/>, []),
         new SidenavListItem(9, 'Amc Due', '/admin/amc-due', <CurrencyRupeeIcon/>, []),
+        new SidenavListItem(10, 'Messages', '/admin/messages', 
+          <Badge badgeContent={unreadMessages} color="error">
+            <EmailIcon/>
+          </Badge>
+        , [])
       ]
     } else {
       if(user.permissions) {
@@ -343,6 +356,15 @@ export default function Dashboard(props) {
 
         if(user.permissions.includes('customer_amcdue_view')) {
           menuOptions.push(new SidenavListItem(9, 'Amc Due', '/admin/amc-due', <CurrencyRupeeIcon/>, []));
+        }
+
+        if(user.permissions.includes('messages_view')) {
+          menuOptions.push(new SidenavListItem(10, 'Messages', '/admin/messages', 
+            <Badge badgeContent={unreadMessages} color="error">
+              <EmailIcon/>
+            </Badge>
+            , [])
+          )
         }
       }    
       if(!hasOneCustomerPermission) {

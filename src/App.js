@@ -16,6 +16,7 @@ import CustomerStockAccess from './views/admin/pages/CustomerStockAccess';
 import CustomerBackup from './views/admin/pages/CustomerBackup';
 import CustomerWhatsapp from './views/admin/pages/CustomerWhatsapp';
 import PageNotFound from './views/admin/pages/PageNotFound';
+import Messages from './views/admin/pages/Messages';
 
 // const GuestRoute = lazy(() => import('./components/shared/GuestRoute'));
 // const AdminLogin = lazy(() => import('./views/admin/auth/AdminLogin'));
@@ -49,6 +50,7 @@ function App() {
                 <Route path='customer/whatsapp-access' element={<CustomerWhatsapp/>}/>
                 <Route path='amc-due' element={<CustomerAmcDue/>}/>
                 <Route path='folder' element={<Folder/>}/>
+                <Route path='messages' element={<Messages/>}/>
               </Route>
               <Route path="*" element={<PageNotFound/>} />
             </Routes>
