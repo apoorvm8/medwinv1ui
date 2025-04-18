@@ -8,7 +8,7 @@ import ConfirmDialog from '../shared/ConfirmDialog';
 import CheckIcon from '@mui/icons-material/Check';
 import {styles, CustomToolbar} from './../shared/CustomToolbar';
 import InfoDialog from '../shared/InfoDialog';
-import {getCustomerMessages$, markSelectedMessages} from '../../features/messages/messageThunk';
+import {getCustomerMessages$, messagesBulkActions} from '../../features/messages/messageThunk';
 
 const CustomerMessages = () => {
     const {isLoading} = useSelector(state => state.customer);
@@ -87,7 +87,7 @@ const CustomerMessages = () => {
       if(confirmData) {
         toast.dismiss();
         try {
-          const response = await dispatch(markSelectedMessages({
+          const response = await dispatch(messagesBulkActions({
             actionType: confirmData.actionType,
             idsStr: JSON.stringify(confirmData.idsArr)
           })).unwrap();
@@ -118,17 +118,35 @@ const CustomerMessages = () => {
       setPage(0);
     }  
 
-    const markSelectedRowsAsSeen = (e) => {
+    const markSelectedRows = (e) => { 
       if(selectedRows.length === 0) {
         setInfoDialog(true);
         setInfoMsg("Please select atleast one record.");
       } else {
-        setConfirmDialog(true);
-        setConfirmMsg(`Are you want to mark these ${selectedRows.length} records as seen?`);
-        setConfirmData({
-          actionType: 'markmsgs',
-          idsArr: selectedRows
-        })
+        if(e === 'seen') {
+          const filteredRows = stateRows.filter(row => selectedRows.includes(row.id) && row.seen === 0);       
+          if(filteredRows.length === 0) {
+            setInfoDialog(true);
+            setInfoMsg("Selected records are already marked as seen.");
+            return;
+          }   
+
+          setConfirmDialog(true);
+          setConfirmMsg(`Are you want to mark ${filteredRows.length} records as seen?`);
+          setConfirmData({
+            actionType: 'markmsgs',
+            idsArr: selectedRows
+          })
+        }
+
+        if(e === 'delete') {
+         setConfirmDialog(true);
+         setConfirmMsg(`Are you sure you want to delete ${selectedRows.length} records?`);
+          setConfirmData({
+            actionType: 'deletemsgs',
+            idsArr: selectedRows
+          }) 
+        }
       }
     }
     
@@ -213,7 +231,12 @@ const CustomerMessages = () => {
             <span style={{display: 'inline-block', marginLeft: '.8rem', marginRight: '1rem'}}>Bulk Actions:</span>
             {
               ( user?.role === superUser || user?.permissions.includes('messages_update') ) && (
-                <Button onClick={markSelectedRowsAsSeen} size="small" color="error" variant="contained">Mark as Seen</Button>
+                  <Button onClick={() => markSelectedRows('seen')} size="small" color="success" variant="contained">Mark as Seen</Button>
+              )  
+            }
+            {
+              ( user?.role === superUser || user?.permissions.includes('messages_delete') ) && (
+                <Button onClick={() => markSelectedRows('seen')} size="small" color="error" variant="contained">Delete</Button>
               )  
             }
           </CardActions>
@@ -235,7 +258,6 @@ const CustomerMessages = () => {
             disableColumnMenu={true}
             showColumnRightBorder={true}
             showCellRightBorder={true}
-            isRowSelectable={(params) => params.row.seen === 0}
             onFilterModelChange={onFilterChange}
             onSelectionModelChange={onSelectionModelChange}
             onSortModelChange={onSortChange}

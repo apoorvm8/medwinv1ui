@@ -20,9 +20,16 @@ export const getCustomerMessages$ = createAsyncThunk('customers/getMessages$', a
 * @desc Function to mark messages as seen in bulk
 * @param data  
 */
-export const markSelectedMessages = createAsyncThunk('customers/markSelectedMessages', async (data, thunkAPI) => {
+export const messagesBulkActions = createAsyncThunk('customers/messagesBulkActions', async (data, thunkAPI) => {
     try {
-        return await messageService.markSelectedMessages(data);
+        let methodType = 'PUT';
+        if (data.actionType === 'deletemsgs') {
+            methodType = 'DELETE';
+        }
+        if (data.actionType === 'markmsgs') {
+            methodType = 'PUT';
+        }
+        return await messageService.messagesBulkActions(data, methodType);
     } catch (error) {
         const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
         return thunkAPI.rejectWithValue(message);

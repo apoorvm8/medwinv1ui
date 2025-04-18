@@ -14,18 +14,18 @@ const getCustomerMessages$ = async (data) => {
     return response.data;
 }
 
-const markSelectedMessages = async (data) => {
+const messagesBulkActions = async (data, methodType = 'PUT') => {
     let response = await authInstance.post(`/${baseAPI}/messages`, {
         actionType: data.actionType,
         idsStr: data.idsStr,
-        _method: 'PUT'
+        _method: methodType
     });
     return response.data;
 }
 
 const messageService = {
     getCustomerMessages$,
-    markSelectedMessages,
+    messagesBulkActions,
 }
 
 export default messageService;
