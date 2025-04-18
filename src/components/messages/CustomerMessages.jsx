@@ -236,7 +236,7 @@ const CustomerMessages = () => {
             }
             {
               ( user?.role === superUser || user?.permissions.includes('messages_delete') ) && (
-                <Button onClick={() => markSelectedRows('seen')} size="small" color="error" variant="contained">Delete</Button>
+                <Button onClick={() => markSelectedRows('delete')} size="small" color="error" variant="contained">Delete</Button>
               )  
             }
           </CardActions>
