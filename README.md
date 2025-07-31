@@ -1,3 +1,26 @@
+# Admin Panel Frontend (React + Material UI + Redux Toolkit)
+
+This is the frontend interface of a production-ready admin panel built using **React (CRA)**, **Material UI**, **Redux Toolkit**, and **Yup** for validation. It connects securely to a Laravel backend API and currently serves over 840 active customers.
+
+## ⚙️ Tech Stack
+
+- React 18 (Create React App)
+- React Router v6
+- Redux Toolkit
+- Axios
+- Material UI (v5)
+- Yup (Form validation)
+- Tailwind CSS (optional if used)
+
+## 📦 Key Features
+
+- Server-side rendered data tables with sorting, filtering, and pagination
+- Modal-driven Create, Update, Delete flows
+- Dynamic **folder tree interface** to manage cloud-connected folder structures
+- Folder-level permissions and file actions
+- Clean separation of concerns using Redux slices and async thunks
+- Integration with Laravel backend APIs secured via Sanctum
+
 # Getting Started with Create React App and Redux
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app), using the [Redux](https://redux.js.org/) and [Redux Toolkit](https://redux-toolkit.js.org/) template.
