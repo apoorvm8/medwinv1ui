@@ -358,7 +358,7 @@ const Customers = () => {
                 cBackup && (
                   <Fragment>
                     <br/>
-                    <span style={{color: 'red'}}>{cBackup.install_date}</span>
+                    <span style={{color: 'blue'}}>{cBackup.install_date}</span>
                   </Fragment>
                 )
               }
@@ -377,6 +377,7 @@ const Customers = () => {
     },
     { 
       field: 'nextamcdate', width: 150,
+      cellClassName: 'cell-bold',
       sortingOrder: ['desc', 'asc'],
       headerName: 'Next Amc Dt',
       renderHeader: () => <strong>AMC DT</strong>,
@@ -392,7 +393,7 @@ const Customers = () => {
                 cBackup && (
                   <Fragment>
                     <br/>
-                    <span style={{color: 'red'}}>{cBackup.next_amc_date}</span>
+                    <span style={{color: 'blue'}}>{cBackup.next_amc_date}</span>
                   </Fragment>
                 )
               }
