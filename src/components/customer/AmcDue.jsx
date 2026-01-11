@@ -153,17 +153,74 @@ const AmcDue = () => {
         renderHeader: () => <strong>Phones</strong>
       },
       { 
-        field: 'installdate', width: 100,
+        field: 'installdate', width: 150,
         cellClassName: 'cell-bold',
         headerName: "Install Dt",
         sortingOrder: ['desc', 'asc'],
-        renderHeader: () => <strong>Install DT</strong>
+        renderHeader: () => <strong>Install DT</strong>,
+        renderCell: (params) => {
+          let row = params.row;
+          let cBackup = params.row.customer_backup;
+          let eInvoice = params.row.e_invoice;
+          return (
+            <Fragment>
+              <p>
+                <span>{row.installdate}</span>
+                {
+                  cBackup && (
+                    <Fragment>
+                      <br/>
+                      <span style={{color: 'blue'}}>{cBackup.install_date}</span>
+                    </Fragment>
+                  )
+                }
+                {
+                  eInvoice && (
+                    <Fragment>
+                      <br/>
+                      <span style={{color: 'green'}}>{eInvoice.install_date}</span>
+                    </Fragment>
+                  )
+                }
+              </p>
+            </Fragment>
+          )
+        }
       },
       { 
-        field: 'nextamcdate', width: 100,
+        field: 'nextamcdate', width: 150,
+        cellClassName: 'cell-bold',
         sortingOrder: ['desc', 'asc'],
         headerName: 'Next Amc Dt',
-        renderHeader: () => <strong>AMC DT</strong>
+        renderHeader: () => <strong>AMC DT</strong>,
+        renderCell: (params) => {
+          let row = params.row;
+          let cBackup = params.row.customer_backup;
+          let eInvoice = params.row.e_invoice;
+          return (
+            <Fragment>
+              <p>
+                <span>{row.nextamcdate}</span>
+                {
+                  cBackup && (
+                    <Fragment>
+                      <br/>
+                      <span style={{color: 'blue'}}>{cBackup.next_amc_date}</span>
+                    </Fragment>
+                  )
+                }
+                {
+                  eInvoice && (
+                    <Fragment>
+                      <br/>
+                      <span style={{color: 'green'}}>{eInvoice.next_amc_date}</span>
+                    </Fragment>
+                  )
+                }
+              </p>
+            </Fragment>
+          )
+        }
       },
       { 
         field: 'amcamount',
