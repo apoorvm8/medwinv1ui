@@ -1,12 +1,8 @@
+# medwinv1ui/dockerfiles/dev.dockerfile
+# Dependencies (node_modules) are installed via the node-deps utility service and bind-mounted at runtime.
 FROM node:18
 
 WORKDIR /app
-
-COPY package.json package-lock.json* ./
-
-RUN npm install
-
-COPY . .
 
 EXPOSE 3000
 
