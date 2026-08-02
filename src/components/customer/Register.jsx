@@ -171,6 +171,13 @@ const Register = () => {
       headerName: 'Date/Time',
       renderHeader: () => <strong>Date/Time</strong>
     },
+    {
+      field: 'next_amc_date', width: 150,
+      cellClassName: 'cell-bold',
+      sortingOrder: ['desc', 'asc'],
+      headerName: 'Next AMC Date',
+      renderHeader: () => <strong>Next AMC Date</strong>
+    },
     { 
       field: 'remarks', width: 500,
       sortable: false,
