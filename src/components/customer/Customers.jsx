@@ -230,7 +230,7 @@ const Customers = () => {
     {
       headerName: 'Ref',
       field: 'softref',
-      width: 100,
+      width: 55,
       sortingOrder: ['asc', 'desc'],
       renderHeader: () => <strong>Ref</strong>,
       renderCell: (params) => params.value ? String(params.value).slice(0, 4) : ''
