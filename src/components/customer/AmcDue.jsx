@@ -1,13 +1,18 @@
 import React, {Fragment, useEffect, useState} from 'react'
 import { useSelector, useDispatch } from 'react-redux';
 import {reset} from '../../features/customer/customerSlice';
-import {getCustomers$} from '../../features/customer/customerThunk';
+import {customerAction$, getCustomers$} from '../../features/customer/customerThunk';
 import { DataGrid} from '@mui/x-data-grid';
-import {Card, CardHeader, CardContent, Button, TextField, Box, Divider } from '@mui/material';
+import {Card, CardHeader, CardContent, Button, TextField, Box, Divider, Tooltip, IconButton } from '@mui/material';
 import {styles, CustomToolbar} from './../shared/CustomToolbar';
 import {DatePicker, LocalizationProvider} from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import dayjs from 'dayjs';
+import LockIcon from '@mui/icons-material/Lock';
+import LockOpenIcon from '@mui/icons-material/LockOpen';
+import CheckIcon from '@mui/icons-material/Check';
+import {toast} from 'react-toastify';
+import ConfirmDialog from '../shared/ConfirmDialog';
 
 
 const AmcDue = () => {
@@ -27,6 +32,10 @@ const AmcDue = () => {
     const [sortOrder, setSortOrder] = useState({field: 'acctno', sort: 'desc'})
     const [dateFilter, setDateFilter] = useState({});
     const [status, setStatus] = useState({value: '-1', text: 'All'});
+    const [confirmDialog, setConfirmDialog] = useState(false);
+    const [confirmData, setConfirmData] = useState(null);
+    const [confirmMsg, setConfirmMsg] = useState('');
+    const superUser = process.env.REACT_APP_SUPER_USER;
     const statuses = [
       {value: '-1', text: "All"},
       {value: 'Y', text: "Unlocked"},
@@ -109,6 +118,42 @@ const AmcDue = () => {
       })
     }
 
+    const customerAction = (actionType, row) => {
+      setConfirmMsg(`Are you sure want to ${row.activestatus === 'Y' ? 'lock' : 'unlock'} account ${row.acctno} ?`);
+      setConfirmData({
+        actionType: actionType,
+        row: row
+      });
+      setConfirmDialog(true);
+    }
+
+    const handleCloseConfirmDialog = async (data) => {
+      setConfirmDialog(false);
+      if(typeof data === 'object') {
+        toast.dismiss();
+        try {
+          const response = await dispatch(customerAction$({
+            actionType: data.actionType,
+            acctno: data.row.acctno
+          })).unwrap();
+          toast.success(response.msg);
+          refreshGrid();
+        } catch(error) {
+          toast.error(error);
+          refreshGrid();
+        }
+        dispatch(reset());
+      }
+
+      setConfirmData(null);
+      setConfirmMsg('');
+    }
+
+    const canLockCustomers = user?.role === superUser || (
+      user?.permissions.includes('customer_master_view') &&
+      user?.permissions.includes('customer_master_lock')
+    );
+
     const columns = [
       {
         field: 'sno' , 
@@ -118,6 +163,38 @@ const AmcDue = () => {
         renderCell: (index) => (pageSize * page) + index.api.getRowIndex(index.row.acctno) + 1,
         width: 55,
         renderHeader: () => <strong>S.No</strong>
+      },
+      {
+        headerName: 'Ref',
+        field: 'softref',
+        width: 100,
+        sortingOrder: ['asc', 'desc'],
+        renderHeader: () => <strong>Ref</strong>,
+        renderCell: (params) => params.value ? String(params.value).slice(0, 4) : ''
+      },
+      {
+        headerName: 'Actions',
+        field: 'action',
+        width: 90,
+        align: 'center',
+        headerAlign: 'center',
+        sortable: false,
+        renderHeader: () => <strong>Actions</strong>,
+        renderCell: (params) => {
+          return canLockCustomers ? (
+            <Tooltip title={params.row.activestatus === 'Y' ? `Lock ${params.row.acctno}` : `Unlock ${params.row.acctno}`}>
+              <IconButton sx={{color: params.row.activestatus === 'Y' ? '#28a745' : '#dc3545'}} onClick={() => customerAction('lock', params.row)}>
+                {
+                  params.row.activestatus === 'Y' ? (
+                    <LockOpenIcon/>
+                  ) : (
+                    <LockIcon/>
+                  )
+                }
+              </IconButton>
+            </Tooltip>
+          ) : null;
+        }
       },
       {
         headerName: 'C_ID',
@@ -305,6 +382,20 @@ const AmcDue = () => {
             />
           </CardContent>
         </Card>
+        {confirmDialog &&
+          (
+            <ConfirmDialog
+              icon={<CheckIcon/>}
+              msg={confirmMsg}
+              color={'success'}
+              yesText={'Yes'}
+              noText={'No'}
+              closeConfirmDialog={handleCloseConfirmDialog}
+              open={confirmDialog}
+              confirmData={confirmData}
+            />
+          )
+        }
     </Fragment>
   )
 }
