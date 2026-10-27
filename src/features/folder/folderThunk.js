@@ -3,32 +3,6 @@ import folderService from './folderService';
 
 
 /**
-* @desc Get the child folders
-* @param data  
-*/
-export const getChildren = createAsyncThunk('folder/getchildren', async (data, thunkAPI) => {
-    try {
-        return await folderService.getChildren(data);
-    } catch (error) {
-        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-        return thunkAPI.rejectWithValue(message);
-    }
-})
-
-/**
-* @desc Following function handles the removal of child folders when a folder is closed
-* @param data 
-*/
-export const collapseFolder = createAsyncThunk('folder/collapseFolder', async (data, thunkAPI) => {
-    try {
-        return data;
-    } catch (error) {
-        const message = (error.response && error.response.data && error.response.data.message) || error.message || error.toString();
-        return thunkAPI.rejectWithValue(message);
-    }
-})
-
-/**
 * @desc Following function handles the removal of child folders when a folder is closed
 * @param data 
 */

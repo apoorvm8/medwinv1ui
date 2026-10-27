@@ -2,11 +2,30 @@
 import { authInstance } from './../../interceptor/auth-interceptor';
 import {updateProgressBar} from './folderThunk';
 
-// Get the folder children from the API
-const getChildren = async (data) => {
-    let response = await authInstance.get(`/folders?filters=${JSON.stringify(data)}`);
-    let {folders} = response.data.data;
-    return {selectedFolderId: data.parent_id, folderChildren: folders};
+// List a folder, or search everything below it, for the folder browser
+const browse = async (params) => {
+    let response = await authInstance.get(`/folders/browse`, {params});
+    return response.data.data;
+}
+
+// Download a file, or a whole folder as a ZIP
+const download = async (item) => {
+    let response;
+    try {
+        response = await authInstance.get(`/folders/download-file/${item.id}`, {responseType: 'blob'});
+    } catch (error) {
+        // Errors come back as a blob too, so read the server's message out of it.
+        const message = await error.response?.data?.text().then((body) => JSON.parse(body).message).catch(() => null);
+        throw new Error(message || `Could not download ${item.name}.`);
+    }
+    const url = window.URL.createObjectURL(new Blob([response.data]));
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', item.resource_type === 'folder' ? item.name + '.zip' : item.name);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
 }
 
 // Create a folder
@@ -68,7 +87,8 @@ const updateUserFolderPermissions$ = async(data) => {
 
 
 const folderService = {
-    getChildren,
+    browse,
+    download,
     createFolder,
     editFolder,
     deleteFolder,

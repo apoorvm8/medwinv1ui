@@ -1,7 +1,7 @@
 import {Paper,Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, TextField, Box, MenuItem, Select, InputLabel, FormControl, FormHelperText, Alert, Collapse, IconButton} from '@mui/material'
 import React, {useEffect, useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { collapseFolder, createFolder, getChildren } from './../../../features/folder/folderThunk';
+import { createFolder } from './../../../features/folder/folderThunk';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 import LoadingButton from './../../shared/LoadingButton';
@@ -55,10 +55,6 @@ function AddFolder({open, onClose, folder, fromSource = null, emitCreateRes = nu
         folderData.permissionRows = permissionRows;
         folderData.fromSource = fromSource;
         let res = await dispatch(createFolder(folderData)).unwrap();
-        if(!fromSource) {
-          await dispatch(collapseFolder(folder.id)).unwrap();
-          await dispatch(getChildren({parent_id: folder.id})).unwrap();
-        }
         toast.success(res.msg);
         if(emitCreateRes) {
           emitCreateRes({type: 'success'});

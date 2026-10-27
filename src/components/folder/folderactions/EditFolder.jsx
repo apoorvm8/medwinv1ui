@@ -1,7 +1,7 @@
 import {Button, Dialog, DialogActions, DialogContent,DialogTitle, TextField, Box, MenuItem, Select, InputLabel, FormControl, FormHelperText, Typography} from '@mui/material'
 import React, {useEffect, useState} from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { collapseFolder, editFolder, getChildren } from './../../../features/folder/folderThunk';
+import { editFolder } from './../../../features/folder/folderThunk';
 import * as yup from 'yup';
 import {useFormik} from 'formik';
 import LoadingButton from './../../shared/LoadingButton';
@@ -38,8 +38,6 @@ function EditFolder({open, onClose, folder}) {
         folderData.depth = folder.depth;
         let res = await dispatch(editFolder(folderData)).unwrap();
         toast.success(res.msg);
-        await dispatch(collapseFolder(folder.id)).unwrap();
-        await dispatch(getChildren({parent_id: folder.id})).unwrap();
       } catch(error) {
         toast.error(error);
       }

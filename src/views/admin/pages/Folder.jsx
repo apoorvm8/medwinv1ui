@@ -1,9 +1,14 @@
 import React from 'react'
-import FolderView from '../../../components/folder/FolderView'
+import { useSearchParams } from 'react-router-dom'
+import FolderBrowser from '../../../components/folder/browser/FolderBrowser'
 
 function Folder() {
+  const [searchParams] = useSearchParams();
+  const folderId = searchParams.get('f') || '';
+
+  // Each folder opens fresh: no search, filters or paging carried over from the previous one.
   return (
-    <FolderView/>
+    <FolderBrowser key={folderId} folderId={folderId}/>
   )
 }
 
