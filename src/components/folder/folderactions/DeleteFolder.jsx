@@ -7,12 +7,11 @@ import { useDispatch, useSelector } from 'react-redux';
 import CheckIcon from '@mui/icons-material/Check';
 import ConfirmDialog from '../../shared/ConfirmDialog';
 import {reset} from '../../../features/folder/folderSlice';
-import {collapseFolder, deleteFolder} from '../../../features/folder/folderThunk';
-import { getChildren } from './../../../features/folder/folderThunk';
+import {deleteFolder} from '../../../features/folder/folderThunk';
 import { toast } from 'react-toastify';
 
 
-function DeleteFolder({open, onClose, folder}) {
+function DeleteFolder({open, onClose, folder, folders = null}) {
   const dispatch = useDispatch();
   const [errorOpen, setAlertOpen] = useState(false);
   const [severity, setSeverity] = useState('error');
@@ -21,7 +20,13 @@ function DeleteFolder({open, onClose, folder}) {
   const [confirmDialog, setConfirmDialog] = useState(false);
   const [shouldDeleteFolder, setShouldDeleteFolder] = useState(false);
 
-  let msg = folder.resource_type === 'folder' ? 'Are you sure you want to delete this folder ? This will remove everything inside it as well' :
+  // The folder browser can also pass several picked items to delete in one go.
+  const items = folders || [folder];
+  const kind = items.length > 1 ? 'Items' : items[0].resource_type === 'folder' ? 'Folder' : 'File';
+  const hasFolders = items.some(item => item.resource_type === 'folder');
+
+  let msg = kind === 'Items' ? `Are you sure you want to delete these ${items.length} items ?${hasFolders ? ' Folders will lose everything inside them as well' : ''}` :
+  kind === 'Folder' ? 'Are you sure you want to delete this folder ? This will remove everything inside it as well' :
   'Are you sure you want to remove this file ?';
 
   const closeDeleteDialog = () => {
@@ -36,11 +41,13 @@ function DeleteFolder({open, onClose, folder}) {
     
     if(confirm) {
         try {
-            let res = await dispatch(deleteFolder({id: folder.id, shouldDeleteFolder})).unwrap();
-            await dispatch(collapseFolder(folder.parent_id)).unwrap();
-            await dispatch(getChildren({parent_id: folder.parent_id})).unwrap();
+            let res;
+            for(const item of items) {
+                res = await dispatch(deleteFolder({id: item.id, shouldDeleteFolder})).unwrap();
+            }
             toast.dismiss();
-            toast.success(res.msg);
+            toast.success(kind === 'Items' ? `${items.length} items deleted successfully.` : res.msg);
+            onClose('delete');
         } catch(error) {
             setFolderMsg(error);
             setSeverity('error');
@@ -61,7 +68,7 @@ function DeleteFolder({open, onClose, folder}) {
             open={open} onClose={() => onClose('delete')} fullWidth
         >
             <DialogTitle id="alert-dialog-title">
-                Confirm Action: <b style={{textDecoration:'underline'}}>Delete {folder.resource_type === 'folder' ? 'folder:' : 'file:'} {folder.name}</b>
+                Confirm Action: <b style={{textDecoration:'underline'}}>Delete {kind === 'Items' ? `${items.length} items` : `${kind.toLowerCase()}: ${items[0].name}`}</b>
             </DialogTitle>
             <DialogContent dividers>
                 <Collapse in={errorOpen}>
@@ -86,9 +93,9 @@ function DeleteFolder({open, onClose, folder}) {
                     {msg}
                 </DialogContentText>
                 {
-                    folder.resource_type === "folder" && (
+                    hasFolders && (
                         <DialogContentText>
-                            <FormControlLabel control={<Checkbox checked={!shouldDeleteFolder} onChange={() => setShouldDeleteFolder(!shouldDeleteFolder)}/>} label="Don't delete the folder." />
+                            <FormControlLabel control={<Checkbox checked={!shouldDeleteFolder} onChange={() => setShouldDeleteFolder(!shouldDeleteFolder)}/>} label={kind === 'Items' ? "Don't delete the folders, only what is inside them." : "Don't delete the folder."} />
                         </DialogContentText>
                     )
                 }
@@ -100,8 +107,7 @@ function DeleteFolder({open, onClose, folder}) {
                     variant="contained"
                     startIcon={<DeleteIcon/>}
                     type="submit"
-                    text={isLoading ? `Deleting ${folder.resource_type === 'folder' ? 'Folder' : 'File' }` 
-                    :  `Delete ${folder.resource_type === 'folder' ? 'Folder' : 'File' }`}
+                    text={isLoading ? `Deleting ${kind}` :  `Delete ${kind}`}
                     isLoading={isLoading}
                     >
                 </LoadingButton>

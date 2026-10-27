@@ -7,8 +7,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import CheckIcon from '@mui/icons-material/Check';
 import ConfirmDialog from '../../shared/ConfirmDialog';
 import {reset} from '../../../features/folder/folderSlice';
-import {collapseFolder, deleteFolder, uploadFiles$} from '../../../features/folder/folderThunk';
-import { getChildren } from './../../../features/folder/folderThunk';
+import {uploadFiles$} from '../../../features/folder/folderThunk';
 import { toast } from 'react-toastify';
 import UploadIcon from '@mui/icons-material/Upload';
 import RemoveCircleIcon from '@mui/icons-material/RemoveCircle';
@@ -131,8 +130,6 @@ function UploadFile({open, onClose, folder}) {
             try {
                 let res = await dispatch(uploadFiles$({id: folder.id, fileLst: totalFiles ? totalFiles : {}})).unwrap();
                 setFolderMsg(res.msg)
-                await dispatch(collapseFolder(folder.id)).unwrap();
-                await dispatch(getChildren({parent_id: folder.id})).unwrap();
                 setSeverity('success');
                 setAlertOpen(true);
                 setTotalFileSize(0.0);
